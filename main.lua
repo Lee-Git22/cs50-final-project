@@ -6,7 +6,7 @@ fightButtons = {}
 itemButtons = {}
 
 function love.load()
-    gameState = "main" -- Default gamestate
+    
  
     -- Options for main menu
     table.insert(mainButtons,  Menu.newButton("Fight", function() print("changing"); gameState = "fight" end))
@@ -21,8 +21,8 @@ function love.load()
     table.insert(fightButtons, Menu.newButton("Attack 2",
      function() print("player chose 2"); gameState = "main" end))
 
-    table.insert(fightButtons, Menu.newButton("Attack 3",
-     function() print("player chose 3"); gameState = "main" end))
+    table.insert(fightButtons, Menu.newButton("Dialogue test",
+     function() print("player chose 3"); gameState = "dialogue" end))
 
     table.insert(fightButtons, Menu.newButton("Attack 4",
      function() print("player chose 4"); gameState = "main" end))
@@ -142,5 +142,11 @@ function love.draw()
 
             cursorY = cursorY + (BUTTON_HEIGHT + margin)
         end
+    end
+
+    if gameState == "dialogue" then
+        cursoyY = 0
+        Menu.loadDialogue("attack", "CHUNGUS", "SMASH")
+
     end
 end
