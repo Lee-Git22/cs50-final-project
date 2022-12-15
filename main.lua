@@ -3,15 +3,15 @@ Menu = require("menu")
 -- Global menu tables to hold buttons
 mainButtons = {}
 fightButtons = {}
-
+itemButtons = {}
 
 function love.load()
     gameState = "main" -- Default gamestate
-
+ 
     -- Options for main menu
-    table.insert(mainButtons,  Menu.newButton("Fight", function() gameState = "fight" end))
+    table.insert(mainButtons,  Menu.newButton("Fight", function() print("changing"); gameState = "fight" end))
     table.insert(mainButtons, Menu.newButton("Switch", function() print("TBD") end))
-    table.insert(mainButtons, Menu.newButton("Item", function() print("Choose an item") end))
+    table.insert(mainButtons, Menu.newButton("Item", function() print("changing"); gameState = "item" end))
     table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
     
     -- Options for fight menu
@@ -27,10 +27,24 @@ function love.load()
     table.insert(fightButtons, Menu.newButton("Attack 4",
      function() print("player chose 4"); gameState = "main" end))
 
+    -- Options for fight menu
+    table.insert(itemButtons, Menu.newButton("Potion", 
+    function() print("player chose Potion"); gameState = "main" end))
+
+    table.insert(itemButtons, Menu.newButton("Attack Up",
+    function() print("player chose Attack Up"); gameState = "main" end))
+
+    table.insert(itemButtons, Menu.newButton("Great Ball",
+    function() print("player chose Great Ball"); gameState = "main" end))
+
+    table.insert(itemButtons, Menu.newButton("Nullberry",
+    function() print("player chose Nullberry"); gameState = "main" end))
+
 end
 
 function love.update(dt)
     -- TODO: Checks which state is loaded and activation their respective buttons
+
 end
 
 function love.draw()
@@ -90,8 +104,8 @@ function love.draw()
             end
 
             fightButton.now = love.mouse.isDown(1) 
-            if fightButton.now and not fightButton.last and hot and  then
-                fightButton.fn();
+            if fightButton.now and not fightButton.last and hot then
+                fightButton.fn()
             end
 
             Menu.loadButton(buttonColor, fightButton.text, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT)
@@ -100,4 +114,33 @@ function love.draw()
         end
     end
 
+    -- Switch to item menu 
+    if gameState == "item" then
+        cursorY = 0
+        
+        -- Load the fight menu
+        for i, itemButton in ipairs(itemButtons) do  
+            itemButton.last = itemButton.now 
+
+            local buttonX = (winWidth) - (buttonWidth) 
+            local buttonY = (winHeight) - (total_height) + cursorY 
+            local buttonColor = {0.5, 0.5, 0.5, 1.0}
+
+            local mx, my = love.mouse.getPosition()
+
+            local hot = mx > buttonX and mx < buttonX + buttonWidth and my > buttonY and my < buttonY + BUTTON_HEIGHT;
+            if hot then
+                buttonColor = {0.9, 0.9, 0.9, 1}
+            end
+
+            itemButton.now = love.mouse.isDown(1) 
+            if itemButton.now and not itemButton.last and hot then
+                itemButton.fn()
+            end
+
+            Menu.loadButton(buttonColor, itemButton.text, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT)
+
+            cursorY = cursorY + (BUTTON_HEIGHT + margin)
+        end
+    end
 end
