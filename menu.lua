@@ -1,6 +1,7 @@
 winWidth = love.graphics.getWidth()
 winHeight = love.graphics.getHeight()
 font = love.graphics.newFont(32)
+
 gameState = "main" -- Default gamestate
 
 borderSize = 12
@@ -62,9 +63,9 @@ Menu = {}
             attack = "attack",
             consumable = "consumable",
         }
-        local monsterName = monsterName
-        local input = input
-        
+        monsterName = monsterName
+        input = input
+
         -- Draws textbox border
         love.graphics.setColor(1, 1, 1)
         love.graphics.rectangle(
