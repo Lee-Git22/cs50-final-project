@@ -1,13 +1,14 @@
 Menu = require("menu")
 MonstersModule = require("MonstersModule")
-
+ItemsModule = require("ItemsModule")
 -- Global menu tables to hold buttons
 mainButtons = {}
-fightButtons = {}
-itemButtons = {}
+Inventory = {}
 
+MonstersIndex = {}
 playerParty = {}
 enemyParty = {}
+
 -- Global values for dialogue
 gameState = {
     phase = "main",
@@ -24,6 +25,8 @@ function love.load()
     -- print(MonstersIndex[1].moveset.move2)
     -- print(MonstersIndex[1]["name"])
 
+    ItemsModule.load() -- Loads in items into Inventory table
+
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("Fight", function() print("changing"); gameState.phase = "fight" end))
     table.insert(mainButtons, Menu.newButton("Switch", function() print("TBD") end))
@@ -38,18 +41,18 @@ function love.load()
 
 
 
-    -- Options for item menu
-    table.insert(itemButtons, Menu.newButton("POTION", 
-    function() print("player chose POTION"); gameState.phase = "dialogue" end))
+    -- -- Options for item menu
+    -- table.insert(itemButtons, Menu.newButton("POTION", 
+    -- function() print("player chose POTION"); gameState.phase = "dialogue" end))
 
-    table.insert(itemButtons, Menu.newButton("FLASH BOMB",
-    function() print("player chose FLASH BOMB"); gameState.phase = "dialogue" end))
+    -- table.insert(itemButtons, Menu.newButton("FLASH BOMB",
+    -- function() print("player chose FLASH BOMB"); gameState.phase = "dialogue" end))
 
-    table.insert(itemButtons, Menu.newButton("BERRY",
-    function() print("player chose BERRY"); gameState.phase = "dialogue" end))
+    -- table.insert(itemButtons, Menu.newButton("BERRY",
+    -- function() print("player chose BERRY"); gameState.phase = "dialogue" end))
 
-    table.insert(itemButtons, Menu.newButton("GREAT BALL",
-    function() print("player chose GREAT BALL"); gameState.phase = "dialogue" end))
+    -- table.insert(itemButtons, Menu.newButton("GREAT BALL",
+    -- function() print("player chose GREAT BALL"); gameState.phase = "dialogue" end))
 
 end
 
@@ -101,18 +104,18 @@ function love.draw()
     if gameState.phase == "fight" then
         cursorY = 0
 
-        -- Load the moves for first monster in party            
+        -- Load the moves for first monster in party      
         list = {playerParty[1].moveset.move1, playerParty[1].moveset.move2, playerParty[1].moveset.move3, playerParty[1].moveset.move4}
 
+        -- For each move in moveset of the current monster
         for i, moves in ipairs(list) do
             local buttonX = (winWidth) - (buttonWidth) 
             local buttonY = (winHeight) - (total_height) + cursorY 
             local buttonColor = {0.5, 0.5, 0.5, 1.0}
 
             local mx, my = love.mouse.getPosition()
-
             local hot = mx > buttonX and mx < buttonX + buttonWidth and 
-            my > buttonY and my < buttonY + BUTTON_HEIGHT;
+                       my > buttonY and my < buttonY + BUTTON_HEIGHT;
             if hot then
                 buttonColor = {0.9, 0.9, 0.9, 1}
             end
@@ -142,16 +145,15 @@ function love.draw()
         cursorY = 0
         
         -- Load the fight menu
-        for i, itemButton in ipairs(itemButtons) do  
-            itemButton.last = itemButton.now 
-
+        for i, items in ipairs(Inventory) do  
+            
             local buttonX = (winWidth) - (buttonWidth) 
             local buttonY = (winHeight) - (total_height) + cursorY 
             local buttonColor = {0.5, 0.5, 0.5, 1.0}
 
             local mx, my = love.mouse.getPosition()
-
-            local hot = mx > buttonX and mx < buttonX + buttonWidth and my > buttonY and my < buttonY + BUTTON_HEIGHT;
+            local hot = mx > buttonX and mx < buttonX + buttonWidth and 
+                       my > buttonY and my < buttonY + BUTTON_HEIGHT;
             if hot then
                 buttonColor = {0.9, 0.9, 0.9, 1}
             end
@@ -159,14 +161,16 @@ function love.draw()
             click = love.mouse.isDown(1) 
             if click and hot and gameState.timer > 0.2 then
                 gameState.timer = 0
+
                 gameState.action = "consumable"
-                gameState.input = itemButton.text
-                itemButton.fn()
+                gameState.input = items.name
+                gameState.phase = "dialogue"
+
                 gameState.timer = 0
 
             end
 
-            Menu.loadButton(buttonColor, itemButton.text, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT)
+            Menu.loadButton(buttonColor, items.name, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT)
 
             cursorY = cursorY + (BUTTON_HEIGHT + margin)
         end
