@@ -1,9 +1,11 @@
 Menu = require("menu")
+MonstersModule = require("MonstersModule")
 
 -- Global menu tables to hold buttons
 mainButtons = {}
 fightButtons = {}
 itemButtons = {}
+MonstersIndex = {}
 
 -- Global values for dialogue
 gameState = {
@@ -16,7 +18,11 @@ gameState = {
 
 
 function love.load()  
- 
+    MonstersModule.load() -- Loads in monsters into MonstersIndex table
+    print(MonstersIndex[1]["stats"]["DEF"])
+    print(MonstersIndex[1]["moveset"]["move3"])
+
+
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("Fight", function() print("changing"); gameState.phase = "fight" end))
     table.insert(mainButtons, Menu.newButton("Switch", function() print("TBD") end))
