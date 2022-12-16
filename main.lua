@@ -6,7 +6,8 @@ fightButtons = {}
 itemButtons = {}
 
 -- Global values for dialogue
-gameStateVariables = {
+gameState = {
+    phase = "main",
     action = "attack",
     monsterName = "CHUNGUS",
     input = "",
@@ -17,42 +18,42 @@ gameStateVariables = {
 function love.load()  
  
     -- Options for main menu
-    table.insert(mainButtons, Menu.newButton("Fight", function() print("changing"); gameState = "fight" end))
+    table.insert(mainButtons, Menu.newButton("Fight", function() print("changing"); gameState.phase = "fight" end))
     table.insert(mainButtons, Menu.newButton("Switch", function() print("TBD") end))
-    table.insert(mainButtons, Menu.newButton("Item", function() print("changing"); gameState = "item" end))
+    table.insert(mainButtons, Menu.newButton("Item", function() print("changing"); gameState.phase = "item" end))
     table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
     
     -- Options for fight menu
     table.insert(fightButtons, Menu.newButton("SMASH", 
-    function() print("player chose 1"); gameState = "dialogue" end))
+    function() print("player chose 1"); gameState.phase = "dialogue" end))
 
     table.insert(fightButtons, Menu.newButton("CHARGE UP",
-    function() print("player chose 2"); gameState = "dialogue" end))
+    function() print("player chose 2"); gameState.phase = "dialogue" end))
 
     table.insert(fightButtons, Menu.newButton("LASER BEAM",
-    function() print("player chose 3"); gameState = "dialogue" end))
+    function() print("player chose 3"); gameState.phase = "dialogue" end))
 
     table.insert(fightButtons, Menu.newButton("BIG ONE",
-    function() print("player chose 4"); gameState = "dialogue" end))
+    function() print("player chose 4"); gameState.phase = "dialogue" end))
 
     -- Options for fight menu
     table.insert(itemButtons, Menu.newButton("POTION", 
-    function() print("player chose POTION"); gameState = "dialogue" end))
+    function() print("player chose POTION"); gameState.phase = "dialogue" end))
 
     table.insert(itemButtons, Menu.newButton("FLASH BOMB",
-    function() print("player chose FLASH BOMB"); gameState = "dialogue" end))
+    function() print("player chose FLASH BOMB"); gameState.phase = "dialogue" end))
 
     table.insert(itemButtons, Menu.newButton("BERRY",
-    function() print("player chose BERRY"); gameState = "dialogue" end))
+    function() print("player chose BERRY"); gameState.phase = "dialogue" end))
 
     table.insert(itemButtons, Menu.newButton("GREAT BALL",
-    function() print("player chose GREAT BALL"); gameState = "dialogue" end))
+    function() print("player chose GREAT BALL"); gameState.phase = "dialogue" end))
 
 end
 
 function love.update(dt)
     -- TODO: Checks which state is loaded and activation their respective buttons
-    gameStateVariables.timer = gameStateVariables.timer + dt
+    gameState.timer = gameState.timer + dt
     --print(gameStateVariables.timer)
 end
 
@@ -61,7 +62,7 @@ function love.draw()
     local cursorY = 0
 
     -- Switch to Main menu
-    if gameState == "main" then
+    if gameState.phase == "main" then
         cursorY = 0 -- Resets cursor
         
         -- Loads the main menu
@@ -84,8 +85,8 @@ function love.draw()
 
             -- Checks if button is clicked and calls function if true
             button.now = love.mouse.isDown(1) -- 1 represents left click
-            if button.now and not button.last and hot and gameStateVariables.timer >= 0.4 then
-                gameStateVariables.timer = 0
+            if button.now and not button.last and hot and gameState.timer >= 0.4 then
+                gameState.timer = 0
                 button.fn()
             end
 
@@ -95,7 +96,7 @@ function love.draw()
     end
 
     -- Switch to Fight menu 
-    if gameState == "fight" then
+    if gameState.phase == "fight" then
         cursorY = 0
 
         -- Load the fight menu
@@ -116,11 +117,13 @@ function love.draw()
             Menu.loadButton(buttonColor, fightButton.text, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT)
 
             fightButton.now = love.mouse.isDown(1) 
-            if fightButton.now and not fightButton.last and hot and gameStateVariables.timer >= 0.4 then
-                gameStateVariables.timer = 0
-                gameStateVariables.action = "attack"
-                gameStateVariables.input = fightButton.text
+            if fightButton.now and not fightButton.last and hot and gameState.timer >= 0.4 then
+                gameState.timer = 0
+                gameState.action = "attack"
+                gameState.input = fightButton.text
                 fightButton.fn()
+                gameState.timer = 0
+
             end
         
             cursorY = cursorY + (BUTTON_HEIGHT + margin)
@@ -128,7 +131,7 @@ function love.draw()
     end
 
     -- Switch to item menu 
-    if gameState == "item" then
+    if gameState.phase == "item" then
         cursorY = 0
         
         -- Load the fight menu
@@ -147,11 +150,13 @@ function love.draw()
             end
 
             itemButton.now = love.mouse.isDown(1) 
-            if itemButton.now and not itemButton.last and hot and gameStateVariables.timer > 0.4 then
-                gameStateVariables.timer = 0
-                gameStateVariables.action = "consumable"
-                gameStateVariables.input = itemButton.text
+            if itemButton.now and not itemButton.last and hot and gameState.timer > 0.4 then
+                gameState.timer = 0
+                gameState.action = "consumable"
+                gameState.input = itemButton.text
                 itemButton.fn()
+                gameState.timer = 0
+
             end
 
             Menu.loadButton(buttonColor, itemButton.text, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT)
@@ -160,10 +165,14 @@ function love.draw()
         end
     end
 
-    if gameState == "dialogue" then
+    if gameState.phase == "dialogue" then
         cursoyY = 0
-
-        Menu.loadDialogue(gameStateVariables.action, gameStateVariables.monsterName, gameStateVariables.input)
-
+        Menu.loadDialogue(gameState.action, gameState.monsterName, gameState.input)
+        print(gameState.timer)
+        
+        -- Change this to be a keypress 
+        if gameState.timer >= 2 then
+            gameState.phase = "main"
+        end
     end
 end

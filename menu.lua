@@ -2,7 +2,6 @@ winWidth = love.graphics.getWidth()
 winHeight = love.graphics.getHeight()
 font = love.graphics.newFont(32)
 
-gameState = "main" -- Default gamestate
 
 borderSize = 12
 
