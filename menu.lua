@@ -26,7 +26,7 @@ Menu = {}
             last = false, -- So each click only registers once
         }
     end
-
+    
     -- Loads a button 
     function Menu.loadButton(buttonColor, text, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT)
          
