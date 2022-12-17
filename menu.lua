@@ -4,17 +4,15 @@ font = love.graphics.newFont(32)
 
 
 borderSize = 12
-
+-- For dialogue box
 BOX_WIDTH = winWidth - borderSize
-BOX_HEIGHT = winHeight * 0.3
+BOX_HEIGHT = winHeight * 0.3 
 
-BUTTON_HEIGHT = 48;
-buttonWidth = winWidth * (1/4);
-
-margin = 1;
-
-total_height = (BUTTON_HEIGHT + margin) * 4; -- Total height of menu box
-
+-- For standard buttons
+MARGIN = 1
+-- total_height
+total_height = winHeight * 0.3; 
+BUTTON_HEIGHT = (total_height - borderSize*2)/ 4 + 2
 Menu = {}
 
     -- Creates a new button class
@@ -22,13 +20,11 @@ Menu = {}
         return {
             text = text,
             fn = fn,
-            now = false,
-            last = false, -- So each click only registers once
         }
     end
     
     -- Loads a button 
-    function Menu.loadButton(buttonColor, text, buttonX, buttonY, buttonWidth, BUTTON_HEIGHT)
+    function Menu.loadButton(buttonColor, text, buttonX, buttonY, buttonWidth)
          
             -- Draws a button
             love.graphics.setColor(unpack(buttonColor));
@@ -54,7 +50,7 @@ Menu = {}
     function Menu.loadDialogue(action, monsterName, input)
 
         local textboxX = borderSize
-        local textboxY = winHeight - BOX_HEIGHT
+        local textboxY = winHeight - BOX_HEIGHT 
         local textboxWidth = BOX_WIDTH - borderSize
         local textboxHeight = BOX_HEIGHT - borderSize
 
@@ -62,6 +58,7 @@ Menu = {}
             attack = "attack",
             consumable = "consumable",
         }
+        
         monsterName = monsterName
         input = input
 
@@ -96,6 +93,11 @@ Menu = {}
                 textboxY + borderSize
             )
         end
+
+        if actions[action] == "battle" then
+            --TODO: Draw effects of the battle
+        end
     end
 
 return Menu
+
