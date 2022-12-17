@@ -32,8 +32,8 @@ function love.load()
     table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
     
     -- fix later with loop 
-    table.insert(playerParty, MonstersIndex[1]) -- insert first monster from index to playerParty (big chungus)
-    table.insert(playerParty, MonstersIndex[2]) 
+    table.insert(playerParty, MonstersIndex[2]) -- insert first monster from index to playerParty (big chungus)
+    table.insert(playerParty, MonstersIndex[1]) 
 
 end
 

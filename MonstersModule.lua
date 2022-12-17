@@ -1,4 +1,4 @@
-function newMonster(name, stats, moveset)
+function monster(name, stats, moveset)
     return {
         name = name,
         stats = stats,
@@ -28,7 +28,7 @@ MonstersIndex = {}
     function MonstersIndex.load()
 
         chungus = table.insert(MonstersIndex, 
-        newMonster(
+        monster(
             "BIG CHUNGUS", 
             stats(
                 100,
@@ -42,7 +42,7 @@ MonstersIndex = {}
         ))
 
         lebron = table.insert(MonstersIndex, 
-        newMonster(
+        monster(
             "LEBRON JAMES", 
             stats(
                 40,
