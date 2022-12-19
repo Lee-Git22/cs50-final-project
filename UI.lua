@@ -24,7 +24,7 @@ UI = {}
             (backgroundHeight) * 0.80 + borderSize
         )
         love.graphics.print(
-            string.format("HP %s/%s", playerHP, playerParty[1].stats.HP), --  Remember to change first arg to current HP
+            string.format("HP %s/%s", playerStats.HP, playerParty[1].stats.HP), --  Remember to change first arg to current HP
             font, 
             winWidth * 0.65 - borderSize, 
             (backgroundHeight) * 0.90 + borderSize
@@ -44,7 +44,7 @@ UI = {}
             borderSize
         )
         love.graphics.print(
-            string.format("HP %s/%s", enemyHP, enemyParty[1].stats.HP), --  Remember to change first arg to current HP
+            string.format("HP %s/%s", enemyStats.HP, enemyParty[1].stats.HP), --  Remember to change first arg to current HP
             font, 
             borderSize, 
             backgroundHeight * 0.10 + borderSize

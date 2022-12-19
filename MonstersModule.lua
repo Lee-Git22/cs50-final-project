@@ -54,9 +54,9 @@ MonstersIndex = {}
                 1), 
             moveset(
                 "FREE THROW", 
-                "SPACE JAM", 
+                "SPACE JAM DUNK", 
                 "GOAT MODE",
-                "RETIRE")
+                "HARD D")
         ))
 
     end

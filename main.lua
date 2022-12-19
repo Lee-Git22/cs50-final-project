@@ -23,9 +23,6 @@ gameState = {
     timer = 0
 }
 
-playerHP = 0
-enemyHP = 0
-
 function love.load()  
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
     ItemsModule.load() -- Loads in items into Inventory table
@@ -38,53 +35,83 @@ function love.load()
     table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
     
     -- fix later with loop 
-    table.insert(playerParty, MonstersIndex[1]) -- insert first monster from index to playerParty (big chungus)
-    table.insert(playerParty, MonstersIndex[2]) 
+    table.insert(playerParty, MonstersIndex[2]) -- insert first monster from index to playerParty (big chungus)
+    table.insert(playerParty, MonstersIndex[1]) 
     
-    table.insert(enemyParty, MonstersIndex[2])
     table.insert(enemyParty, MonstersIndex[1])
+    table.insert(enemyParty, MonstersIndex[2])
 
-    playerHP = playerParty[1].stats.HP
-    playerATK = playerParty[1].stats.ATK
-    playerDEF = playerParty[1].stats.DEF
+    playerStats = {
+        TYPE = playerParty[1].stats.TYPE,
+        HP = playerParty[1].stats.HP,
+        ATK = playerParty[1].stats.ATK,
+        DEF = playerParty[1].stats.DEF,
+        SPD = playerParty[1].stats.SPD,
+    }
 
-    enemyHP = enemyParty[1].stats.HP 
+    enemyStats = {
+        TYPE = enemyParty[1].stats.TYPE,
+        HP = enemyParty[1].stats.HP,
+        ATK = enemyParty[1].stats.ATK,
+        DEF = enemyParty[1].stats.DEF,
+        SPD = enemyParty[1].stats.SPD
+    }
+
 end
 
 function love.update(dt)
     gameState.timer = gameState.timer + dt
 
-    if gameState.phase == "battle" then
+    local playerBuffTimer = 0 -- Not used yet
 
-        -- Player will attack first if speed is tied or higher
-        if playerParty[1].stats.SPD >= enemyParty[1].stats.SPD then
+    if gameState.phase == "battle" then
+        print(playerStats.ATK)
+        -- For round 1
+
             for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
                 if gameState.input == entry.name then
-                    ATK = playerParty[1].stats.ATK
-                    damage = (entry.parameters.base + ATK) * entry.parameters.multiplier
-
-                    typeBonus = getCounter(entry.TYPE, enemyParty[1].stats.TYPE)
+                    
                     print(entry.TYPE)
-                    print(enemyParty[1].stats.TYPE)
+                    -- For buffs
+                    if entry.TYPE == "BUFF" then
+                        print("buffed")
+                        playerStats.ATK = playerStats.ATK + entry.parameters.ATK 
+                        playerStats.DEF = playerStats.DEF + entry.parameters.DEF
+                        playerStats.SPD = playerStats.SPD + entry.parameters.SPD
 
-                    hit = math.random()
-                    if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
-                        -- TODO: add logic when HP becomes 0
-                        enemyHP = math.floor(enemyHP - ((damage * typeBonus) - enemyParty[1].stats.DEF))
+                        -- playerBuffTimer = 3
+                        print(playerStats.ATK)
+                    
+                    
                     else 
-                        if entry.type == "RISKY" then
-                            playerHP = playerHP - playerParty[1].stats.HP * 0.10 -- hits player back 10% hp 
+                        print("attack")
+                        -- For attacks
+                        hitValue = (entry.parameters.base + playerStats.ATK) * entry.parameters.multiplier
+                        typeBonus = getCounter(entry.TYPE, enemyStats.TYPE) -- will be 1 (default) or a 1.5x boost
+                        hit = math.random()
+                        
+                        if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
+                            -- TODO: add logic when HP becomes 0
+                            damage = (hitValue * typeBonus) - enemyStats.DEF
+                            if damage > 0 then
+                                enemyStats.HP = math.floor(enemyStats.HP - damage)
+                            end
+            
+                        else 
+                            if entry.TYPE == "RISKY" then -- hits player back 25% hp 
+                                playerStats.HP = playerStats.HP - playerParty[1].stats.HP * 0.25 
+                            end
+                            
+                            print("MISSED") -- TODO: add a miss dialogue scene
                         end
-                        print("MISSED") -- TODO: add a miss dialogue scene
                     end
                 end
-
-                gameState.phase = "main"
             end
-        else -- otherwise enemy attacks first 
 
-        end
         -- Calculate turn 2
+
+        --TODO - implement buff counter
+        gameState.phase = "main"
     end
 end
 

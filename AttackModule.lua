@@ -17,6 +17,16 @@ function Attack(base, multiplier, hitRate)
     }
 end
 
+
+function Buff(ATK, DEF, SPD)
+    return {
+        ATK = ATK,
+        DEF = DEF,
+        SPD = SPD
+    }
+end
+
+
 function getCounter(type1, type2)
     if type1 == "HUMAN" and type2 == "ANIMAL" then
         return 1.5
@@ -45,11 +55,39 @@ AttackDataBase = {}
             Attack(40, 1, 0.25)
         ))
 
-        chargeup = table.insert(AttackDataBase, 
+        copypasta = table.insert(AttackDataBase, 
         newEntry(
             "COPYPASTA",
             "MACHINE",
             Attack(25, 0.3, 0.7)
+        ))
+
+        freethrow = table.insert(AttackDataBase, 
+        newEntry(
+            "FREE THROW",
+            "HUMAN",
+            Attack(20, 0.7, 0.9)
+        ))
+
+        spacejamdunk = table.insert(AttackDataBase, 
+        newEntry(
+            "SPACE JAM DUNK",
+            "MACHINE",
+            Attack(1, 1, 1)
+        ))
+
+        goatmode = table.insert(AttackDataBase, 
+        newEntry(
+            "GOAT MODE",
+            "BUFF",
+            Buff(40, 40, 40)
+        ))
+
+        hardd = table.insert(AttackDataBase, 
+        newEntry(
+            "HARD D",
+            "REGULAR",
+            Attack(15, 0.8, 0.80)
         ))
     end
 return AttackDataBase
