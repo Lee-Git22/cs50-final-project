@@ -34,6 +34,9 @@ function love.load()
     -- fix later with loop 
     table.insert(playerParty, MonstersIndex[2]) -- insert first monster from index to playerParty (big chungus)
     table.insert(playerParty, MonstersIndex[1]) 
+    
+    table.insert(enemyParty, MonstersIndex[1])
+    table.insert(enemyParty, MonstersIndex[2])
 
 end
 
@@ -49,6 +52,8 @@ function love.draw()
     local cursorY = 0
 
     UI.drawBackground()
+    UI.drawPlayer()
+    UI.drawEnemy()
 
     -- Switch to Main menu
     if gameState.phase == "main" then
@@ -58,7 +63,7 @@ function love.draw()
         for i, button in ipairs(mainButtons) do            
             local buttonX = winWidth * 0.75 -- start 1/4 way in from right corner
             local buttonWidth =  winWidth * 0.25 - borderSize 
-            local buttonY = (winHeight) - (total_height) + cursorY -- Start at bottom of the screen and shift up by menu size and down by cursor amount
+            local buttonY = (winHeight) - (totalMenuHeight) + cursorY -- Start at bottom of the screen and shift up by menu size and down by cursor amount
             local buttonColor = {0.9, 0.9, 0.9, 1.0} -- Sets default button color
 
             local mx, my = love.mouse.getPosition() -- gets position of mouse and separates into mx my coordinate   
@@ -96,7 +101,7 @@ function love.draw()
         for i, moves in ipairs(list) do
             local buttonX = (winWidth) * 0.6
             local buttonWidth = (winWidth) * 0.4 - borderSize
-            local buttonY = (winHeight) - (total_height) + cursorY
+            local buttonY = (winHeight) - (totalMenuHeight) + cursorY
             local buttonColor = {0.9, 0.9, 0.9, 1.0}
 
             local mx, my = love.mouse.getPosition()
@@ -134,7 +139,7 @@ function love.draw()
             
             local buttonX = (winWidth * 0.6) 
             local buttonWidth = (winWidth) * 0.4 - borderSize
-            local buttonY = (winHeight) - (total_height) + cursorY
+            local buttonY = (winHeight) - (totalMenuHeight) + cursorY
             local buttonColor = {0.9, 0.9, 0.9, 1.0}
 
             local mx, my = love.mouse.getPosition()

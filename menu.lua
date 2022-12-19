@@ -11,8 +11,8 @@ BOX_HEIGHT = winHeight * 0.3
 -- For standard buttons
 MARGIN = 1
 -- total_height
-total_height = winHeight * 0.3; 
-BUTTON_HEIGHT = (total_height - borderSize*2)/ 4 + 2
+totalMenuHeight = winHeight * 0.3; 
+BUTTON_HEIGHT = (totalMenuHeight - borderSize*2)/ 4 + 2
 Menu = {}
 
     -- Creates a new button class
