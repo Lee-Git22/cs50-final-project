@@ -6,8 +6,9 @@ function monster(name, stats, moveset)
     }
 end
 
-function stats(HP, ATK, DEF, SPD)
+function stats(TYPE, HP, ATK, DEF, SPD)
     return {
+        TYPE = TYPE,
         HP = HP,
         ATK = ATK,
         DEF = DEF,
@@ -31,20 +32,22 @@ MonstersIndex = {}
         monster(
             "BIG CHUNGUS", 
             stats(
+                "ANIMAL",
                 100,
-                69,
-                13,
+                15,
+                30,
                 25), 
             moveset(
                 "LASER", 
                 "BIG ONE", 
-                "SMASH")
+                "COPYPASTA")
         ))
 
         lebron = table.insert(MonstersIndex, 
         monster(
             "LEBRON JAMES", 
             stats(
+                "HUMAN",
                 40,
                 5,
                 2,

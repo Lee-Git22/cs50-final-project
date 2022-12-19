@@ -24,12 +24,11 @@ UI = {}
             (backgroundHeight) * 0.80 + borderSize
         )
         love.graphics.print(
-            string.format("HP %s/%s", playerParty[1].stats.HP, playerParty[1].stats.HP),
+            string.format("HP %s/%s", playerHP, playerParty[1].stats.HP), --  Remember to change first arg to current HP
             font, 
             winWidth * 0.65 - borderSize, 
             (backgroundHeight) * 0.90 + borderSize
         )
-
         -- TODO: Load a sprite for playerParty[1]
     end
 
@@ -45,11 +44,12 @@ UI = {}
             borderSize
         )
         love.graphics.print(
-            string.format("HP %s/%s", enemyParty[1].stats.HP, enemyParty[1].stats.HP),
+            string.format("HP %s/%s", enemyHP, enemyParty[1].stats.HP), --  Remember to change first arg to current HP
             font, 
             borderSize, 
             backgroundHeight * 0.10 + borderSize
         )
+        -- TODO: Load a sprite for enemyParty[1]
     end
 
 

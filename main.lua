@@ -2,6 +2,7 @@ Menu = require("Menu")
 UI = require("UI")
 MonstersModule = require("MonstersModule")
 ItemsModule = require("ItemsModule")
+AttackModule = require("AttackModule")
 
 -- Global menu tables to hold buttons
 mainButtons = {}
@@ -10,20 +11,25 @@ Inventory = {}
 MonstersIndex = {}
 playerParty = {}
 enemyParty = {}
+AttackDataBase = {}
 
--- Global values for dialogue
+-- Global values used for respective game state
 gameState = {
     phase = "main",
     action = "attack",
     monsterName = "default",
     input = "",
+    output = "",
     timer = 0
 }
 
+playerHP = 0
+enemyHP = 0
 
 function love.load()  
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
     ItemsModule.load() -- Loads in items into Inventory table
+    AttackModule.load() -- Loads in database into Database table
 
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("Fight", function() gameState.phase = "fight" end))
@@ -32,19 +38,54 @@ function love.load()
     table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
     
     -- fix later with loop 
-    table.insert(playerParty, MonstersIndex[2]) -- insert first monster from index to playerParty (big chungus)
-    table.insert(playerParty, MonstersIndex[1]) 
+    table.insert(playerParty, MonstersIndex[1]) -- insert first monster from index to playerParty (big chungus)
+    table.insert(playerParty, MonstersIndex[2]) 
     
-    table.insert(enemyParty, MonstersIndex[1])
     table.insert(enemyParty, MonstersIndex[2])
+    table.insert(enemyParty, MonstersIndex[1])
 
+    playerHP = playerParty[1].stats.HP
+    playerATK = playerParty[1].stats.ATK
+    playerDEF = playerParty[1].stats.DEF
+
+    enemyHP = enemyParty[1].stats.HP 
 end
 
 function love.update(dt)
-    -- TODO: Checks which state is loaded and activation their respective buttons
     gameState.timer = gameState.timer + dt
 
+    if gameState.phase == "battle" then
 
+        -- Player will attack first if speed is tied or higher
+        if playerParty[1].stats.SPD >= enemyParty[1].stats.SPD then
+            for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
+                if gameState.input == entry.name then
+                    ATK = playerParty[1].stats.ATK
+                    damage = (entry.parameters.base + ATK) * entry.parameters.multiplier
+
+                    typeBonus = getCounter(entry.TYPE, enemyParty[1].stats.TYPE)
+                    print(entry.TYPE)
+                    print(enemyParty[1].stats.TYPE)
+
+                    hit = math.random()
+                    if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
+                        -- TODO: add logic when HP becomes 0
+                        enemyHP = math.floor(enemyHP - ((damage * typeBonus) - enemyParty[1].stats.DEF))
+                    else 
+                        if entry.type == "RISKY" then
+                            playerHP = playerHP - playerParty[1].stats.HP * 0.10 -- hits player back 10% hp 
+                        end
+                        print("MISSED") -- TODO: add a miss dialogue scene
+                    end
+                end
+
+                gameState.phase = "main"
+            end
+        else -- otherwise enemy attacks first 
+
+        end
+        -- Calculate turn 2
+    end
 end
 
 function love.draw()
@@ -161,7 +202,7 @@ function love.draw()
 
             end
 
-            Menu.loadButton(buttonColor, items.name, buttonX, buttonY, buttonWidth)
+            Menu.loadButton(buttonColor, string.format("%s x %s", items.name, items.uses), buttonX, buttonY, buttonWidth)
 
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
         end
@@ -173,7 +214,7 @@ function love.draw()
         
         -- Change this to be a keypress later
         if gameState.timer >= 2 then
-            gameState.phase = "main"
+            gameState.phase = "battle"
         end
         
     end
