@@ -10,7 +10,7 @@ Inventory = {}
 
 MonstersIndex = {}
 playerParty = {}
-enemyParty = {}
+computerParty = {}
 AttackDataBase = {}
 
 -- Global values used for respective game state
@@ -18,8 +18,8 @@ gameState = {
     phase = "main",
     action = "attack",
     monsterName = "default",
-    input = "",
-    output = "",
+    playerInput = "",
+    computerInput = "",
     timer = 0
 }
 
@@ -38,77 +38,113 @@ function love.load()
     table.insert(playerParty, MonstersIndex[2]) -- insert first monster from index to playerParty (big chungus)
     table.insert(playerParty, MonstersIndex[1]) 
     
-    table.insert(enemyParty, MonstersIndex[1])
-    table.insert(enemyParty, MonstersIndex[2])
+    table.insert(computerParty, MonstersIndex[1])
+    table.insert(computerParty, MonstersIndex[2])
 
-    playerStats = {
-        TYPE = playerParty[1].stats.TYPE,
-        HP = playerParty[1].stats.HP,
-        ATK = playerParty[1].stats.ATK,
-        DEF = playerParty[1].stats.DEF,
-        SPD = playerParty[1].stats.SPD,
+    -- Initialize player and computer stats for first monster in party
+
+    playerCombat = {
+        DMG = 0,
+        ATK = 0,
+        DEF = 0,
+        SPD = 0
     }
 
-    enemyStats = {
-        TYPE = enemyParty[1].stats.TYPE,
-        HP = enemyParty[1].stats.HP,
-        ATK = enemyParty[1].stats.ATK,
-        DEF = enemyParty[1].stats.DEF,
-        SPD = enemyParty[1].stats.SPD
+    computerCombat = {
+        DMG = 0,
+        ATK = 0,
+        DEF = 0,
+        SPD = 0
     }
+
 
 end
 
 function love.update(dt)
     gameState.timer = gameState.timer + dt
 
+    playerStats = {
+        TYPE = playerParty[1].stats.TYPE,
+        HP = playerParty[1].stats.HP - playerCombat.DMG,
+        ATK = playerParty[1].stats.ATK + playerCombat.ATK,
+        DEF = playerParty[1].stats.DEF + playerCombat.DEF,
+        SPD = playerParty[1].stats.SPD + playerCombat.SPD,
+    }
+
+    computerStats = {
+        TYPE = computerParty[1].stats.TYPE,
+        HP = computerParty[1].stats.HP - computerCombat.DMG,
+        ATK = computerParty[1].stats.ATK + computerCombat.ATK,
+        DEF = computerParty[1].stats.DEF + computerCombat.DEF,
+        SPD = computerParty[1].stats.SPD + computerCombat.SPD
+    }
+
+
+    
     local playerBuffTimer = 0 -- Not used yet
+
+    if playerStats.SPD >= computerStats.SPD then
+        local move1 = "player"
+        local move2 = "computer"
+    else
+        local move1 = "computer"
+        local move2 = "player"
+    end
+
 
     if gameState.phase == "battle" then
         print(playerStats.ATK)
-        -- For round 1
+        
+        
 
-            for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
-                if gameState.input == entry.name then
-                    
-                    print(entry.TYPE)
-                    -- For buffs
-                    if entry.TYPE == "BUFF" then
-                        print("buffed")
-                        playerStats.ATK = playerStats.ATK + entry.parameters.ATK 
-                        playerStats.DEF = playerStats.DEF + entry.parameters.DEF
-                        playerStats.SPD = playerStats.SPD + entry.parameters.SPD
+       
+       
+        -- For player round
+        for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
+            if gameState.playerInput == entry.name then    
+                hit = math.random()
 
-                        -- playerBuffTimer = 3
-                        print(playerStats.ATK)
+                -- For buffs
+                if entry.TYPE == "BUFF" then
+                    if hit <= entry.parameters.hitRate then
+
+                        playerCombat.ATK = entry.parameters.ATK 
+                        playerCombat.DEF = entry.parameters.DEF
+                        playerCombat.SPD = entry.parameters.SPD
+
+                    else
+                        print("lost focus")
+                    end
+                    -- playerBuffTimer = 3                   
+                else 
+                    -- For attacks
+                    hitValue = (entry.parameters.base + playerStats.ATK) * entry.parameters.multiplier
+                    typeBonus = getCounter(entry.TYPE, computerStats.TYPE) -- will be 1 (default) or a 1.5x boost
                     
                     
-                    else 
-                        print("attack")
-                        -- For attacks
-                        hitValue = (entry.parameters.base + playerStats.ATK) * entry.parameters.multiplier
-                        typeBonus = getCounter(entry.TYPE, enemyStats.TYPE) -- will be 1 (default) or a 1.5x boost
-                        hit = math.random()
-                        
-                        if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
-                            -- TODO: add logic when HP becomes 0
-                            damage = (hitValue * typeBonus) - enemyStats.DEF
-                            if damage > 0 then
-                                enemyStats.HP = math.floor(enemyStats.HP - damage)
-                            end
-            
-                        else 
-                            if entry.TYPE == "RISKY" then -- hits player back 25% hp 
-                                playerStats.HP = playerStats.HP - playerParty[1].stats.HP * 0.25 
-                            end
-                            
-                            print("MISSED") -- TODO: add a miss dialogue scene
+                    if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
+                        -- TODO: add logic when HP becomes 0
+                        hitDamage = math.floor((hitValue * typeBonus) - computerStats.DEF)
+                        if hitDamage > 0 then
+                            --computerStats.HP = math.floor(computerStats.HP - damage)
+                            computerCombat.DMG = computerCombat.DMG + hitDamage
+                        else -- sets a minimum damage of 1
+                            computerCombat.DMG = computerCombat.DMG + 1
                         end
+                        
+                    else 
+                        if entry.TYPE == "RISKY" then -- hits player back 25% hp 
+                            playerStats.HP = playerStats.HP - playerParty[1].stats.HP * 0.25 
+                        end
+                        
+                        print("MISSED") -- TODO: add a miss dialogue scene
                     end
                 end
             end
+        end
+        
+        -- Calculate computer round
 
-        -- Calculate turn 2
 
         --TODO - implement buff counter
         gameState.phase = "main"
@@ -187,7 +223,7 @@ function love.draw()
 
                 gameState.monsterName = playerParty[1].name
                 gameState.action = "attack"
-                gameState.input = moves
+                gameState.playerInput = moves
                 gameState.phase = "dialogue"
 
                 gameState.timer = 0
@@ -222,7 +258,7 @@ function love.draw()
                 gameState.timer = 0
 
                 gameState.action = "consumable"
-                gameState.input = items.name
+                gameState.playerInput = items.name
                 gameState.phase = "dialogue"
 
                 gameState.timer = 0
@@ -237,7 +273,7 @@ function love.draw()
 
     if gameState.phase == "dialogue" then
         cursoyY = 0
-        Menu.loadDialogue(gameState.action, gameState.monsterName, gameState.input)
+        Menu.loadDialogue(gameState.action, gameState.monsterName, gameState.playerInput)
         
         -- Change this to be a keypress later
         if gameState.timer >= 2 then

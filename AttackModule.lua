@@ -18,11 +18,12 @@ function Attack(base, multiplier, hitRate)
 end
 
 
-function Buff(ATK, DEF, SPD)
+function Buff(ATK, DEF, SPD, hitRate)
     return {
         ATK = ATK,
         DEF = DEF,
-        SPD = SPD
+        SPD = SPD,
+        hitRate = hitRate
     }
 end
 
@@ -59,7 +60,7 @@ AttackDataBase = {}
         newEntry(
             "COPYPASTA",
             "MACHINE",
-            Attack(25, 0.3, 0.7)
+            Attack(25, 0.7, 0.7)
         ))
 
         freethrow = table.insert(AttackDataBase, 
@@ -80,14 +81,15 @@ AttackDataBase = {}
         newEntry(
             "GOAT MODE",
             "BUFF",
-            Buff(40, 40, 40)
+            Buff(40, 40, 40, 1) -- change to 75% 
         ))
 
         hardd = table.insert(AttackDataBase, 
         newEntry(
             "HARD D",
-            "REGULAR",
-            Attack(15, 0.8, 0.80)
+            "RISKY",
+            Attack(20, 1, 0.70)
         ))
     end
+        
 return AttackDataBase

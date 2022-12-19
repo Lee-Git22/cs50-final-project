@@ -38,13 +38,13 @@ UI = {}
         
         love.graphics.setColor(0.2, 0.2, 0.2)
         love.graphics.print(
-            string.format("%s", enemyParty[1].name), 
+            string.format("%s", computerParty[1].name), 
             font, 
             borderSize, 
             borderSize
         )
         love.graphics.print(
-            string.format("HP %s/%s", enemyStats.HP, enemyParty[1].stats.HP), --  Remember to change first arg to current HP
+            string.format("HP %s/%s", computerStats.HP, computerParty[1].stats.HP), --  Remember to change first arg to current HP
             font, 
             borderSize, 
             backgroundHeight * 0.10 + borderSize
