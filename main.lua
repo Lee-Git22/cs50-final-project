@@ -18,7 +18,6 @@ AttackDataBase = {}
 gameState = {
     phase = "main",
     action = "attack",
-    monsterName = "default",
     playerInput = "",
     computerInput = "",
     timer = 0
@@ -46,20 +45,7 @@ function love.load()
         table.insert(computerParty, MonstersIndex[i])
     end
 
-    -- Initialize player and computer stats for first monster in party
-    playerCombat = {
-        DMG = 0,
-        ATK = 1,
-        DEF = 1,
-        SPD = 1
-    }
 
-    computerCombat = {
-        DMG = 0,
-        ATK = 1,
-        DEF = 1,
-        SPD = 1
-    }
 
 end
 
@@ -96,65 +82,79 @@ function love.update(dt)
 
     
 
-    if gameState.phase == "battle" then
-        
-        gameState.computerInput = getCPUmove()
-        
+    if gameState.phase == "playerRound" then
+            
         -- For player round
         for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
             if gameState.playerInput == entry.name then
+                print("PLAYER ROUND")
                 if entry.TYPE == "BUFF" then
-                    tmptmp = "this"                  
-                    tmptmp, playerCombat = calcBuff(tmptmp, entry, playerCombat)
-                    print(tmptmp)
+                    gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
+                    --print(gameState.action)
 
                 else if entry.TYPE == "DEBUFF" then
-                    tmptmp, computerCombat = calcBuff(tmptmp, entry, computerCombat)
-                    print(tmptmp)
+                    gameState, computerCombat = calcBuff(gameState, entry, computerCombat)
+                    --print(gameState.action)
 
                     else 
                         -- For attacks
-                        tmptmp, entry, playerCombat, playerStats, computerCombat, computerStats = 
-                        calcAttack(tmptmp, entry, playerCombat, playerStats, computerCombat, computerStats)
-                        print(tmptmp)
+                        gameState, entry, playerCombat, playerStats, computerCombat, computerStats = 
+                        calcAttack(gameState, entry, playerCombat, playerStats, computerCombat, computerStats)
+
+                        print("FINISH ATTACK")
+                        gameState.action = "SUPER EFFECTIVE"
+                        gameState.phase = "playerAction"
+
                     end
-            
+                    
                 end
+
+                gameState.timer = 0
+                gameState.phase = "playerAction"
+
             end
         end
 
-               
+    end
+
+
+
+    if gameState.phase == "cpuRound" then
         -- For computer round
-        for j, entry in pairs(AttackDataBase) do
+        for i, entry in pairs(AttackDataBase) do
             if gameState.computerInput == entry.name then
+                print("COMPUTER ROUND")
                 if entry.TYPE == "BUFF" then
-                    tmptmp = "this"                  
-                    tmptmp, computerCombat = calcBuff(tmptmp, entry, computerCombat)
+                    gameState, computerCombat = calcBuff(gameState, entry, computerCombat)
                     print(string.format("computer move: %s", gameState.computerInput))
-                    print(tmptmp)
+                    print(gameState.action)
 
                 else if entry.TYPE == "DEBUFF" then
-                    tmptmp, playerCombat = calcBuff(tmptmp, entry, playerCombat)
+                    gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
                     print(string.format("computer move: %s", gameState.computerInput))
-                    print(tmptmp)
+                    print(gameState.action)
 
                     else 
                         -- For attacks
-                        print("brew monkey")
-                        tmptmp, entry, computerCombat, computerStats, playerCombat, playerStats = 
-                        calcAttack(tmptmp, entry, computerCombat, computerStats, playerCombat, playerStats)
+                        gameState, entry, computerCombat, computerStats, playerCombat, playerStats = 
+                        calcAttack(gameState, entry, computerCombat, computerStats, playerCombat, playerStats)
                         
                         print(string.format("computer move: %s", gameState.computerInput))
-                        print(tmptmp)
+                        print(gameState.action)
                     end
                 end
             end
+            gameState.timer = 0
+            gameState.phase = "cpuAction"    
         end
-        gameState.phase = "main"
+
+
+       
     end
 end
 
 function love.draw()
+    --print(gameState.phase)
     -- Represents current button y position
     local cursorY = 0
 
@@ -224,7 +224,7 @@ function love.draw()
             if leftClick and hot and gameState.timer >= 0.3 then
                 gameState.timer = 0
 
-                gameState.monsterName = playerParty[playerLead].name
+                
                 gameState.action = "attack"
                 gameState.playerInput = moves
                 gameState.phase = "dialogue"
@@ -276,17 +276,48 @@ function love.draw()
 
     if gameState.phase == "dialogue" then
         cursoyY = 0
-        Menu.loadDialogue(gameState.action, gameState.monsterName, gameState.playerInput)
+        Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
         
         -- Change this to be a keypress later
-        if gameState.timer >= 2 then
-            gameState.phase = "battle"
+        if gameState.timer >= 1.5 then
+            gameState.phase = "playerRound"
         end
         
     end
 
-    if gameState.phase == "battle" then
-        --TODO: Draw animations
+    if gameState.phase == "playerAction" then
+        cursoyY = 0
+        Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
+
+        if gameState.timer >= 1.5 then
+            gameState.phase = "cpuDialogue"
+            gameState.timer = 0
+            gameState.computerInput = getCPUmove()
+        end
+    end
+
+    if gameState.phase == "cpuDialogue" then
+        cursoyY = 0
+        
+
+        
+        gameState.action = "attack"
+        Menu.loadDialogue(gameState, computerParty[computerLead].name, gameState.computerInput)
+        
+        -- Change this to be a keypress later
+        if gameState.timer >= 1.5 then
+            gameState.phase = "cpuRound"
+        end
+        
+    end
+
+    if gameState.phase == "cpuAction" then
+        cursoyY = 0
+        Menu.loadDialogue(gameState, computerParty[computerLead].name, gameState.computerInput)
+
+        if gameState.timer >= 1.5 then
+            gameState.phase = "main"
+        end
     end
 
 end

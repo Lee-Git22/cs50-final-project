@@ -96,7 +96,7 @@ MonstersIndex = {}
         monster(
             "PIKACHU",
             stats(
-                "ANIMAL",
+                "MAGIC",
                 115,
                 50,
                 10,
@@ -156,20 +156,20 @@ MonstersIndex = {}
                 "DEEP LEARN")
         ))
 
-        tofurkey = table.insert(MonstersIndex,
+        kratos = table.insert(MonstersIndex,
         monster(
-            "TOFURKEY",
+            "KRATOS",
             stats(
-                "MACHINE",
+                "MAGIC",
                 150,
                 65,
                 15,
                 20), 
             moveset(
-                "TURKEY SLAM", 
-                "LASER", 
-                "PIECIC",
-                "CURSE")
+                "FREE THROW", 
+                "CURSE", 
+                "SPARTAN RAGE",
+                "SLAP")
         ))
         
     end

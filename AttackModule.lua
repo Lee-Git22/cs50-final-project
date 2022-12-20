@@ -123,7 +123,7 @@ AttackDataBase = {}
         newEntry(
             "SLAP",
             "HUMAN",
-            Attack(0, 1.15, 1)
+            Attack(40, 1.15, 1)
         ))
 
         notrouble = table.insert(AttackDataBase, 
@@ -157,6 +157,13 @@ AttackDataBase = {}
         goatmode = table.insert(AttackDataBase, 
         newEntry(
             "GOAT MODE",
+            "BUFF",
+            Buff(2, 2, 2, 1) 
+        ))
+
+        spartanrage = table.insert(AttackDataBase, 
+        newEntry(
+            "SPARTAN RAGE",
             "BUFF",
             Buff(2, 2, 2, 1) 
         ))

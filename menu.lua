@@ -47,17 +47,17 @@ Menu = {}
     end
 
     -- Loads a dialogue box
-    function Menu.loadDialogue(action, monsterName, input)
+    function Menu.loadDialogue(gameState, monsterName, input)
 
         local textboxX = borderSize
         local textboxY = winHeight - BOX_HEIGHT 
         local textboxWidth = BOX_WIDTH - borderSize
         local textboxHeight = BOX_HEIGHT - borderSize
 
-        local actions = {
-            attack = "attack",
-            consumable = "consumable",
-        }
+        -- local actions = {
+        --     attack = "attack",
+        --     consumable = "consumable",
+        -- }
         
         monsterName = monsterName
         input = input
@@ -72,7 +72,7 @@ Menu = {}
             textboxHeight
         )
 
-        if actions[action] == "attack" then
+        if gameState.action == "attack" then
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -83,7 +83,7 @@ Menu = {}
             )
         end
 
-        if actions[action] == "consumable" then
+        if gameState.action == "consumable" then
             -- Draws consumable text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -94,7 +94,18 @@ Menu = {}
             )
         end
 
-        if actions[action] == "battle" then
+        if gameState.action == "SUPER EFFECTIVE" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("IT WAS SUPER EFFECTIVE"),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
+        if gameState.action == "battle" then
             --TODO: Draw effects of the battle
         end
     end
