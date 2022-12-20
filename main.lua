@@ -34,15 +34,18 @@ function love.load()
     table.insert(mainButtons, Menu.newButton("Item", function() gameState.phase = "item" end))
     table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
     
-    -- fix later with loop 
-    table.insert(playerParty, MonstersIndex[2]) -- insert first monster from index to playerParty (big chungus)
-    table.insert(playerParty, MonstersIndex[1]) 
+    -- fix later with randomized loop 
+    for i = 1,5,1
+    do
+        table.insert(playerParty, MonstersIndex[i]) 
+    end
     
-    table.insert(computerParty, MonstersIndex[1])
-    table.insert(computerParty, MonstersIndex[2])
+    for i = 3,1,-1
+    do
+        table.insert(computerParty, MonstersIndex[i])
+    end
 
     -- Initialize player and computer stats for first monster in party
-
     playerCombat = {
         DMG = 0,
         ATK = 0,
@@ -57,18 +60,19 @@ function love.load()
         SPD = 0
     }
 
-
 end
 
 function love.update(dt)
     gameState.timer = gameState.timer + dt
+    
+    order = 5 -- placeholder name
 
     playerStats = {
-        TYPE = playerParty[1].stats.TYPE,
-        HP = playerParty[1].stats.HP - playerCombat.DMG,
-        ATK = playerParty[1].stats.ATK + playerCombat.ATK,
-        DEF = playerParty[1].stats.DEF + playerCombat.DEF,
-        SPD = playerParty[1].stats.SPD + playerCombat.SPD,
+        TYPE = playerParty[order].stats.TYPE,
+        HP = playerParty[order].stats.HP - playerCombat.DMG,
+        ATK = playerParty[order].stats.ATK + playerCombat.ATK,
+        DEF = playerParty[order].stats.DEF + playerCombat.DEF,
+        SPD = playerParty[order].stats.SPD + playerCombat.SPD,
     }
 
     computerStats = {
@@ -96,7 +100,7 @@ function love.update(dt)
         print(playerStats.ATK)
         
         
-
+        
        
        
         -- For player round
@@ -133,18 +137,57 @@ function love.update(dt)
                         end
                         
                     else 
-                        if entry.TYPE == "RISKY" then -- hits player back 25% hp 
-                            playerStats.HP = playerStats.HP - playerParty[1].stats.HP * 0.25 
+                        if entry.TYPE == "RISKY" then -- hits player back 12.5% hp 
+                            playerCombat.DMG = playerCombat.DMG + math.floor(playerParty[order].stats.HP * 0.125)
                         end
                         
-                        print("MISSED") -- TODO: add a miss dialogue scene
+                        --print("MISSED") -- TODO: add a miss dialogue scene
                     end
                 end
             end
+
         end
         
-        -- Calculate computer round
+        -- -- Calculate computer round
+        -- for i, entry2 in pairs(AttackDataBase) do
+        --     if gameState.computerInput == entry2.name then
+        --         hit = math.random()
 
+        --         if entry2.TYPE == "BUFF" then
+        --             if hit <= entry2.parameters.hitRate then
+
+        --                 computerCombat.ATK = entry2.parameters.ATK 
+        --                 computerCombat.DEF = entry2.parameters.DEF
+        --                 computerCombat.SPD = entry2.parameters.SPD
+        --                 print("computer used a buff")
+        --             else
+        --                 print("computer lost focus")
+        --             end
+        --         else
+        --             hitValue = (entry2.parameters.base + computerStats.ATK) * entry2.parameters.multiplier
+        --             typeBonus = getCounter(entry2.TYPE, playerStats.TYPE) -- will be 1 (default) or a 1.5x boost
+                    
+                    
+        --             if hit <= entry2.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
+        --                 -- TODO: add logic when HP becomes 0
+        --                 hitDamage = math.floor((hitValue * typeBonus) - playerStats.DEF)
+        --                 if hitDamage > 0 then
+        --                     --computerStats.HP = math.floor(computerStats.HP - damage)
+        --                     playerCombat.DMG = playerCombat.DMG + hitDamage
+        --                 else -- sets a minimum damage of 1
+        --                     playerCombat.DMG = playerCombat.DMG + 1
+        --                 end
+                        
+        --             else 
+        --                 if entry2.TYPE == "RISKY" then -- hits player back 25% hp 
+        --                     computerCombat.DMG = computerCombat.DMG + computerParty[1].stats.HP * 0.25 
+        --                 end
+                        
+        --                 --print("MISSED") -- TODO: add a miss dialogue scene
+        --             end
+        --         end
+        --     end
+        -- end
 
         --TODO - implement buff counter
         gameState.phase = "main"
@@ -199,7 +242,7 @@ function love.draw()
         cursorY = 0
 
         -- Load the moves for first monster in party      
-        list = {playerParty[1].moveset.move1, playerParty[1].moveset.move2, playerParty[1].moveset.move3, playerParty[1].moveset.move4}
+        list = {playerParty[order].moveset.move1, playerParty[order].moveset.move2, playerParty[order].moveset.move3, playerParty[order].moveset.move4}
 
         -- For each move in moveset of the current monster
         for i, moves in ipairs(list) do
@@ -221,7 +264,7 @@ function love.draw()
             if leftClick and hot and gameState.timer >= 0.3 then
                 gameState.timer = 0
 
-                gameState.monsterName = playerParty[1].name
+                gameState.monsterName = playerParty[order].name
                 gameState.action = "attack"
                 gameState.playerInput = moves
                 gameState.phase = "dialogue"

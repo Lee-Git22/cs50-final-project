@@ -18,13 +18,13 @@ UI = {}
         
         love.graphics.setColor(0.2, 0.2, 0.2)
         love.graphics.print(
-            string.format("%s", playerParty[1].name), 
+            string.format("%s", playerParty[order].name), 
             font, 
             winWidth * 0.65 - borderSize, 
             (backgroundHeight) * 0.80 + borderSize
         )
         love.graphics.print(
-            string.format("HP %s/%s", playerStats.HP, playerParty[1].stats.HP), --  Remember to change first arg to current HP
+            string.format("HP %s/%s", playerStats.HP, playerParty[order].stats.HP), --  Remember to change first arg to current HP
             font, 
             winWidth * 0.65 - borderSize, 
             (backgroundHeight) * 0.90 + borderSize

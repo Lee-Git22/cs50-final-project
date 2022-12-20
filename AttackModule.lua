@@ -39,57 +39,128 @@ function getCounter(type1, type2)
     return 1.0
 end
 
+function resetCombat(DMG, ATK, DEF, SPD)
+    DMG = 0
+    ATK = 0
+    DEF = 0
+    SPD = 0
+    return 
+end 
+
 AttackDataBase = {}
     function AttackDataBase.load()
 
         laser = table.insert(AttackDataBase,
         newEntry(
             "LASER",
-            "REGULAR",
-            Attack(20, 0.45, 0.90)
+            "MACHINE",
+            Attack(15, 1.15, 0.90)
         ))
 
         bigone = table.insert(AttackDataBase, 
         newEntry(
             "BIG ONE",
             "RISKY",
-            Attack(40, 1, 0.25)
+            Attack(30, 1.5, 0.25)
         ))
 
         copypasta = table.insert(AttackDataBase, 
         newEntry(
             "COPYPASTA",
             "MACHINE",
-            Attack(25, 0.7, 0.7)
+            Attack(25, 1.15, 0.7)
         ))
 
         freethrow = table.insert(AttackDataBase, 
         newEntry(
             "FREE THROW",
             "HUMAN",
-            Attack(20, 0.7, 0.9)
+            Attack(20, 1.1, 0.9)
         ))
 
         spacejamdunk = table.insert(AttackDataBase, 
         newEntry(
             "SPACE JAM DUNK",
             "MACHINE",
-            Attack(1, 1, 1)
+            Attack(0, 1, 1)
         ))
 
         goatmode = table.insert(AttackDataBase, 
         newEntry(
             "GOAT MODE",
             "BUFF",
-            Buff(40, 40, 40, 1) -- change to 75% 
+            Buff(50, 30, 30, 1) -- change to 75% 
         ))
 
         hardd = table.insert(AttackDataBase, 
         newEntry(
             "HARD D",
             "RISKY",
-            Attack(20, 1, 0.70)
+            Attack(20, 1.25, 0.70)
+        ))
+
+        slap = table.insert(AttackDataBase, 
+        newEntry(
+            "SLAP",
+            "REGULAR",
+            Attack(10, 1.25, 0.95)
+        ))
+
+        chugchug = table.insert(AttackDataBase, 
+        newEntry(
+            "CHUG CHUG",
+            "BUFF",
+            Buff(20, -15, -15, 1)
+        ))
+
+        turkeyshot = table.insert(AttackDataBase, 
+        newEntry(
+            "TURKEY SLAM",
+            "RISKY",
+            Attack(25, 1, 0.75)
+        ))
+
+        cheapshot = table.insert(AttackDataBase, 
+        newEntry(
+            "CHEAP SHOT",
+            "HUMAN",
+            Attack(-15, 1.1, 1)
+        ))
+
+        download = table.insert(AttackDataBase, 
+        newEntry(
+            "DOWNLOAD",
+            "RISKY",
+            Attack(1, 1.3, 0.70)
+        ))
+
+        deeplearn = table.insert(AttackDataBase, 
+        newEntry(
+            "DEEP LEARN",
+            "BUFF", -- change to debuff 
+            Buff(15, 10, 10, 0.95)
+        ))
+
+        thunderbolt = table.insert(AttackDataBase, 
+        newEntry(
+            "THUNDER BOLT",
+            "REGULAR", -- change to debuff 
+            Attack(15, 1.15, 0.65)
+        ))
+
+        notrouble = table.insert(AttackDataBase, 
+        newEntry(
+            "NO TROUBLE",
+            "BUFF", 
+            Buff(15, 10, 10, 1)
+        ))
+
+        piecic = table.insert(AttackDataBase, 
+        newEntry(
+            "PIECIC",
+            "RISKY", -- change to debuff 
+            Attack(65, 1, 0.7)
         ))
     end
-        
+        -- notes for tomorrow, add debuff and change buff values to be % scaling factors
 return AttackDataBase
