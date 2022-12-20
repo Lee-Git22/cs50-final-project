@@ -3,6 +3,7 @@ UI = require("UI")
 MonstersModule = require("MonstersModule")
 ItemsModule = require("ItemsModule")
 AttackModule = require("AttackModule")
+Battle = require("Battle")
 
 -- Global menu tables to hold buttons
 mainButtons = {}
@@ -40,7 +41,7 @@ function love.load()
         table.insert(playerParty, MonstersIndex[i]) 
     end
     
-    for i = 3,1,-1
+    for i = 1,5,1
     do
         table.insert(computerParty, MonstersIndex[i])
     end
@@ -65,27 +66,25 @@ end
 function love.update(dt)
     gameState.timer = gameState.timer + dt
     
-    order = 5 -- placeholder name
-
+    playerLead = 1 -- placeholder name
+    computerLead = 3
+    
+    --initialize battle parameters
     playerStats = {
-        TYPE = playerParty[order].stats.TYPE,
-        HP = playerParty[order].stats.HP - playerCombat.DMG,
-        ATK = playerParty[order].stats.ATK * playerCombat.ATK,
-        DEF = playerParty[order].stats.DEF * playerCombat.DEF,
-        SPD = playerParty[order].stats.SPD * playerCombat.SPD,
+        TYPE = playerParty[playerLead].stats.TYPE,
+        HP = playerParty[playerLead].stats.HP - playerCombat.DMG,
+        ATK = playerParty[playerLead].stats.ATK * playerCombat.ATK,
+        DEF = playerParty[playerLead].stats.DEF * playerCombat.DEF,
+        SPD = playerParty[playerLead].stats.SPD * playerCombat.SPD,
     }
 
     computerStats = {
-        TYPE = computerParty[1].stats.TYPE,
-        HP = computerParty[1].stats.HP - computerCombat.DMG,
-        ATK = computerParty[1].stats.ATK * computerCombat.ATK,
-        DEF = computerParty[1].stats.DEF * computerCombat.DEF,
-        SPD = computerParty[1].stats.SPD * computerCombat.SPD
+        TYPE = computerParty[computerLead].stats.TYPE,
+        HP = computerParty[computerLead].stats.HP - computerCombat.DMG,
+        ATK = computerParty[computerLead].stats.ATK * computerCombat.ATK,
+        DEF = computerParty[computerLead].stats.DEF * computerCombat.DEF,
+        SPD = computerParty[computerLead].stats.SPD * computerCombat.SPD
     }
-
-
-    
-    local playerBuffTimer = 0 -- Not used yet
 
     if playerStats.SPD >= computerStats.SPD then
         local move1 = "player"
@@ -95,71 +94,63 @@ function love.update(dt)
         local move2 = "player"
     end
 
+    
 
     if gameState.phase == "battle" then
-        print(playerStats.ATK)
         
+        gameState.computerInput = getCPUmove()
         
-        
-       
-       
         -- For player round
         for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
-            if gameState.playerInput == entry.name then    
-                hit = math.random() -- used to determine if a hit lands
-
+            if gameState.playerInput == entry.name then
                 if entry.TYPE == "BUFF" then
-                    if hit <= entry.parameters.hitRate then
-                        playerCombat.ATK = playerCombat.ATK * entry.parameters.ATK 
-                        playerCombat.DEF = playerCombat.DEF * entry.parameters.DEF
-                        playerCombat.SPD = playerCombat.SPD * entry.parameters.SPD
-                    else
-                        print("lost focus")
-                    end
-                
-                else if entry.TYPE == "DEBUFF" then
-                    if hit <= entry.parameters.hitRate then
-                        enemyCombat.ATK = enemyCombat.ATK * entry.parameters.ATK
-                        enemyCombat.DEF = enemyCombat.DEF * entry.parameters.DEF
-                        enemyCombat.SPD = enemyCombat.SPD * entry.parameters.SPD
-                    else
-                        print("missed debuff")
-                    end
+                    tmptmp = "this"                  
+                    tmptmp, playerCombat = calcBuff(tmptmp, entry, playerCombat)
+                    print(tmptmp)
 
-                else 
-                    -- For attacks
-                    hitValue = (entry.parameters.base + playerStats.ATK) * entry.parameters.multiplier
-                    typeBonus = getCounter(entry.TYPE, computerStats.TYPE) -- will be 1 (default) or a 1.25x boost for effective and 0.8x for not effective
-                    
-                    
-                    if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
-                        hitDamage = math.floor((hitValue * typeBonus) - computerStats.DEF)
-                        
-                        if hitDamage > 0 then
-                            computerCombat.DMG = computerCombat.DMG + hitDamage
-                        else -- sets a minimum damage of 1
-                            computerCombat.DMG = computerCombat.DMG + 1
-                        end
-                        
-                        --TODO: Logic for HP hitting 0 
+                else if entry.TYPE == "DEBUFF" then
+                    tmptmp, computerCombat = calcBuff(tmptmp, entry, computerCombat)
+                    print(tmptmp)
+
                     else 
-                        if entry.TYPE == "RISKY" then -- hits player back 12.5% hp 
-                            playerCombat.DMG = playerCombat.DMG + math.floor(playerParty[order].stats.HP * 0.125)
-                            print("missed and hurt itself")
-                        end
-                        
-                        --print("MISSED") -- TODO: add a miss dialogue scene
+                        -- For attacks
+                        tmptmp, entry, playerCombat, playerStats, computerCombat, computerStats = 
+                        calcAttack(tmptmp, entry, playerCombat, playerStats, computerCombat, computerStats)
+                        print(tmptmp)
                     end
-                end
             
                 end
             end
-        
+        end
 
+               
+        -- For computer round
+        for j, entry in pairs(AttackDataBase) do
+            if gameState.computerInput == entry.name then
+                if entry.TYPE == "BUFF" then
+                    tmptmp = "this"                  
+                    tmptmp, computerCombat = calcBuff(tmptmp, entry, computerCombat)
+                    print(string.format("computer move: %s", gameState.computerInput))
+                    print(tmptmp)
 
+                else if entry.TYPE == "DEBUFF" then
+                    tmptmp, playerCombat = calcBuff(tmptmp, entry, playerCombat)
+                    print(string.format("computer move: %s", gameState.computerInput))
+                    print(tmptmp)
+
+                    else 
+                        -- For attacks
+                        print("brew monkey")
+                        tmptmp, entry, computerCombat, computerStats, playerCombat, playerStats = 
+                        calcAttack(tmptmp, entry, computerCombat, computerStats, playerCombat, playerStats)
+                        
+                        print(string.format("computer move: %s", gameState.computerInput))
+                        print(tmptmp)
+                    end
+                end
+            end
+        end
         gameState.phase = "main"
-        
-    end
     end
 end
 
@@ -211,7 +202,7 @@ function love.draw()
         cursorY = 0
 
         -- Load the moves for first monster in party      
-        list = {playerParty[order].moveset.move1, playerParty[order].moveset.move2, playerParty[order].moveset.move3, playerParty[order].moveset.move4}
+        list = {playerParty[playerLead].moveset.move1, playerParty[playerLead].moveset.move2, playerParty[playerLead].moveset.move3, playerParty[playerLead].moveset.move4}
 
         -- For each move in moveset of the current monster
         for i, moves in ipairs(list) do
@@ -233,7 +224,7 @@ function love.draw()
             if leftClick and hot and gameState.timer >= 0.3 then
                 gameState.timer = 0
 
-                gameState.monsterName = playerParty[order].name
+                gameState.monsterName = playerParty[playerLead].name
                 gameState.action = "attack"
                 gameState.playerInput = moves
                 gameState.phase = "dialogue"

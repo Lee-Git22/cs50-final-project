@@ -70,7 +70,7 @@ MonstersIndex = {}
                 35,
                 40), 
             moveset(
-                "THUNDERBOLT", 
+                "THUNDER BOLT", 
                 "CHUG CHUG", 
                 "CHEAP SHOT",
                 "TURKEY SLAM")

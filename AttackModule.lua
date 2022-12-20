@@ -27,29 +27,6 @@ function Buff(ATK, DEF, SPD, hitRate)
     }
 end
 
-
-function getCounter(type1, type2)
-    if type1 == "HUMAN" and type2 == "ANIMAL" then
-        return 1.25
-    elseif type1 == "MACHINE" and type2 == "HUMAN" then
-        return 1.25
-    elseif type1 == "MAGIC" and type2 == "MACHINE" then
-        return 1.25
-    elseif type1 == "ANIMAL" and type2 == "MAGIC" then
-    elseif type1 == type2 then
-        return 0.8
-    end
-    return 1.0
-end
-
-function resetCombat(DMG, ATK, DEF, SPD)
-    DMG = 0
-    ATK = 0
-    DEF = 0
-    SPD = 0
-    return 
-end 
-
 AttackDataBase = {}
     function AttackDataBase.load()
 
@@ -94,7 +71,7 @@ AttackDataBase = {}
         newEntry(
             "THUNDER BOLT",
             "MAGIC", 
-            Attack(15, 1.15, 0.75)
+            Attack(15, 1.15, 1)
         ))
  
         spacejamdunk = table.insert(AttackDataBase, 
@@ -160,7 +137,7 @@ AttackDataBase = {}
         newEntry(
             "CURSE",
             "DEBUFF",  
-            Buff(1, 0.9, 0.75, 0.85)
+            Buff(1, 0.5, 0.5, 1)
         ))
 
         deeplearn = table.insert(AttackDataBase, 
@@ -181,7 +158,7 @@ AttackDataBase = {}
         newEntry(
             "GOAT MODE",
             "BUFF",
-            Buff(1.5, 1.25, 1.25, 0.85) -- change to 75% 
+            Buff(2, 2, 2, 1) 
         ))
         
     end

@@ -100,4 +100,3 @@ Menu = {}
     end
 
 return Menu
-
