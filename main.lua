@@ -83,16 +83,19 @@ function love.update(dt)
     
 
     if gameState.phase == "playerRound" then
-            
+        buffTarget = playerParty[playerLead].name
+        curseTarget = computerParty[computerLead].name
         -- For player round
         for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
             if gameState.playerInput == entry.name then
                 print("PLAYER ROUND")
                 if entry.TYPE == "BUFF" then
+                    
                     gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
                     --print(gameState.action)
 
                 else if entry.TYPE == "DEBUFF" then
+                    
                     gameState, computerCombat = calcBuff(gameState, entry, computerCombat)
                     --print(gameState.action)
 
@@ -102,7 +105,7 @@ function love.update(dt)
                         calcAttack(gameState, entry, playerCombat, playerStats, computerCombat, computerStats)
 
                         print("FINISH ATTACK")
-                        gameState.action = "SUPER EFFECTIVE"
+                        --gameState.action = "SUPER EFFECTIVE"
                         gameState.phase = "playerAction"
 
                     end
@@ -120,16 +123,20 @@ function love.update(dt)
 
 
     if gameState.phase == "cpuRound" then
+        buffTarget = computerParty[computerLead].name
+        curseTarget = playerParty[playerLead].name
         -- For computer round
         for i, entry in pairs(AttackDataBase) do
             if gameState.computerInput == entry.name then
                 print("COMPUTER ROUND")
                 if entry.TYPE == "BUFF" then
+                    
                     gameState, computerCombat = calcBuff(gameState, entry, computerCombat)
                     print(string.format("computer move: %s", gameState.computerInput))
                     print(gameState.action)
 
                 else if entry.TYPE == "DEBUFF" then
+                    
                     gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
                     print(string.format("computer move: %s", gameState.computerInput))
                     print(gameState.action)

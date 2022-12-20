@@ -45,10 +45,10 @@ function calcBuff(gameState, entry, table)
         table.DEF = table.DEF * entry.parameters.DEF
         table.SPD = table.SPD * entry.parameters.SPD
        
-        gameState.action = "buff works"
+        gameState.action = "BUFF" -- NEEDS WORK
         return gameState, table
     else
-        gameState.action = "buff failed"
+        gameState.action = "MISS"
         return gameState, table
     end
     return gameState, table
@@ -62,24 +62,31 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
     if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
         hitDamage = math.floor((hitValue * typeBonus) - stat2.DEF)
         
+        if typeBonus == 1.25 then
+            gameState.action = "SUPER EFFECTIVE!"
+        end
+
+        if typeBonus == 0.8 then
+            gameState.action = "NOT VERY EFFECTIVE..."
+        end
+
         if hitDamage > 0 then
             comb2.DMG = comb2.DMG + hitDamage
-            
-            gameState.action = "SUPER EFFECTIVE"
-            
+
         else -- sets a minimum damage of 1
             comb2.DMG = comb2.DMG + 1
-            gameState.action = "SUPER EFFECTIVE"
         end
         return gameState, entry, comb1, stat1, comb2, stat2
         --TODO: Logic for HP hitting 0 
-    else 
+    else  -- Miss
+        gameState.action = "MISS"
+
         if entry.TYPE == "RISKY" then -- hits player back 12.5% hp 
             comb1.DMG = comb1.DMG + math.floor(playerParty[playerLead].stats.HP * 0.125)
-            print("missed and hurt itself")
+            gameState.action = "RISKY"
         end
         return gameState, entry, comb1, stat1, comb2, stat2
-        --print("MISSED") -- TODO: add a miss dialogue scene
+        --print("MISSED") -- TODO: add a miss dialogue scene 
     end
     return gameState, entry, comb1, stat1, comb2, stat2
 end

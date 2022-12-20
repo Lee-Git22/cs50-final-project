@@ -94,20 +94,61 @@ Menu = {}
             )
         end
 
-        if gameState.action == "SUPER EFFECTIVE" then
+        if gameState.action == "SUPER EFFECTIVE!" 
+        or gameState.action == "NOT VERY EFFECTIVE..." then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("IT WAS SUPER EFFECTIVE"),
+                string.format("IT IS %s", gameState.action),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+        
+        if gameState.action == "BUFF" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("%s IS RAMPING UP", buffTarget),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
             )
         end
 
-        if gameState.action == "battle" then
-            --TODO: Draw effects of the battle
+        if gameState.action == "DEBUFF" then
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("%s IS SHOOK", curseTarget),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
         end
+        
+        if gameState.action == "MISS" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("IT MISSED"),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
+        if gameState.action == "RISKY" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("IT MISSED AND HURT ITSELF"),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
     end
 
 return Menu
