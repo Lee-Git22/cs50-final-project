@@ -38,9 +38,9 @@ MonstersIndex = {}
                 30,
                 25), 
             moveset(
-                "LASER", 
+                "BITE", 
                 "BIG ONE", 
-                "COPYPASTA",
+                "CURSE",
                 "SLAP")
         ))
 
@@ -48,7 +48,7 @@ MonstersIndex = {}
         monster(
             "LEBRON JAMES", 
             stats(
-                "ANIMAL",
+                "HUMAN",
                 120,
                 10,
                 10,
@@ -64,13 +64,13 @@ MonstersIndex = {}
         monster(
             "BREW MONKEY", 
             stats(
-                "HUMAN",
+                "ANIMAL",
                 150,
                 35,
                 35,
                 40), 
             moveset(
-                "SLAP", 
+                "THUNDERBOLT", 
                 "CHUG CHUG", 
                 "CHEAP SHOT",
                 "TURKEY SLAM")
@@ -97,10 +97,10 @@ MonstersIndex = {}
             "PIKACHU",
             stats(
                 "ANIMAL",
-                145,
-                70,
+                115,
+                50,
                 10,
-                40), 
+                50), 
             moveset(
                 "TURKEY SLAM", 
                 "HARD D", 
@@ -130,8 +130,8 @@ MonstersIndex = {}
             stats(
                 "MACHINE",
                 225,
-                30,
-                60,
+                20,
+                40,
                 25), 
             moveset(
                 "CHUG CHUG", 
@@ -153,7 +153,7 @@ MonstersIndex = {}
                 "NO TROUBLE", 
                 "FREE THROW", 
                 "PIECIC",
-                "BIG ONE")
+                "DEEP LEARN")
         ))
 
         tofurkey = table.insert(MonstersIndex,
@@ -169,7 +169,7 @@ MonstersIndex = {}
                 "TURKEY SLAM", 
                 "LASER", 
                 "PIECIC",
-                "HARD D")
+                "CURSE")
         ))
         
     end

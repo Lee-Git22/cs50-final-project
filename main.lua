@@ -48,16 +48,16 @@ function love.load()
     -- Initialize player and computer stats for first monster in party
     playerCombat = {
         DMG = 0,
-        ATK = 0,
-        DEF = 0,
-        SPD = 0
+        ATK = 1,
+        DEF = 1,
+        SPD = 1
     }
 
     computerCombat = {
         DMG = 0,
-        ATK = 0,
-        DEF = 0,
-        SPD = 0
+        ATK = 1,
+        DEF = 1,
+        SPD = 1
     }
 
 end
@@ -70,17 +70,17 @@ function love.update(dt)
     playerStats = {
         TYPE = playerParty[order].stats.TYPE,
         HP = playerParty[order].stats.HP - playerCombat.DMG,
-        ATK = playerParty[order].stats.ATK + playerCombat.ATK,
-        DEF = playerParty[order].stats.DEF + playerCombat.DEF,
-        SPD = playerParty[order].stats.SPD + playerCombat.SPD,
+        ATK = playerParty[order].stats.ATK * playerCombat.ATK,
+        DEF = playerParty[order].stats.DEF * playerCombat.DEF,
+        SPD = playerParty[order].stats.SPD * playerCombat.SPD,
     }
 
     computerStats = {
         TYPE = computerParty[1].stats.TYPE,
         HP = computerParty[1].stats.HP - computerCombat.DMG,
-        ATK = computerParty[1].stats.ATK + computerCombat.ATK,
-        DEF = computerParty[1].stats.DEF + computerCombat.DEF,
-        SPD = computerParty[1].stats.SPD + computerCombat.SPD
+        ATK = computerParty[1].stats.ATK * computerCombat.ATK,
+        DEF = computerParty[1].stats.DEF * computerCombat.DEF,
+        SPD = computerParty[1].stats.SPD * computerCombat.SPD
     }
 
 
@@ -106,91 +106,60 @@ function love.update(dt)
         -- For player round
         for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
             if gameState.playerInput == entry.name then    
-                hit = math.random()
+                hit = math.random() -- used to determine if a hit lands
 
-                -- For buffs
                 if entry.TYPE == "BUFF" then
                     if hit <= entry.parameters.hitRate then
-
-                        playerCombat.ATK = entry.parameters.ATK 
-                        playerCombat.DEF = entry.parameters.DEF
-                        playerCombat.SPD = entry.parameters.SPD
-
+                        playerCombat.ATK = playerCombat.ATK * entry.parameters.ATK 
+                        playerCombat.DEF = playerCombat.DEF * entry.parameters.DEF
+                        playerCombat.SPD = playerCombat.SPD * entry.parameters.SPD
                     else
                         print("lost focus")
                     end
-                    -- playerBuffTimer = 3                   
+                
+                else if entry.TYPE == "DEBUFF" then
+                    if hit <= entry.parameters.hitRate then
+                        enemyCombat.ATK = enemyCombat.ATK * entry.parameters.ATK
+                        enemyCombat.DEF = enemyCombat.DEF * entry.parameters.DEF
+                        enemyCombat.SPD = enemyCombat.SPD * entry.parameters.SPD
+                    else
+                        print("missed debuff")
+                    end
+
                 else 
                     -- For attacks
                     hitValue = (entry.parameters.base + playerStats.ATK) * entry.parameters.multiplier
-                    typeBonus = getCounter(entry.TYPE, computerStats.TYPE) -- will be 1 (default) or a 1.5x boost
+                    typeBonus = getCounter(entry.TYPE, computerStats.TYPE) -- will be 1 (default) or a 1.25x boost for effective and 0.8x for not effective
                     
                     
                     if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
-                        -- TODO: add logic when HP becomes 0
                         hitDamage = math.floor((hitValue * typeBonus) - computerStats.DEF)
+                        
                         if hitDamage > 0 then
-                            --computerStats.HP = math.floor(computerStats.HP - damage)
                             computerCombat.DMG = computerCombat.DMG + hitDamage
                         else -- sets a minimum damage of 1
                             computerCombat.DMG = computerCombat.DMG + 1
                         end
                         
+                        --TODO: Logic for HP hitting 0 
                     else 
                         if entry.TYPE == "RISKY" then -- hits player back 12.5% hp 
                             playerCombat.DMG = playerCombat.DMG + math.floor(playerParty[order].stats.HP * 0.125)
+                            print("missed and hurt itself")
                         end
                         
                         --print("MISSED") -- TODO: add a miss dialogue scene
                     end
                 end
+            
+                end
             end
-
-        end
         
-        -- -- Calculate computer round
-        -- for i, entry2 in pairs(AttackDataBase) do
-        --     if gameState.computerInput == entry2.name then
-        --         hit = math.random()
 
-        --         if entry2.TYPE == "BUFF" then
-        --             if hit <= entry2.parameters.hitRate then
 
-        --                 computerCombat.ATK = entry2.parameters.ATK 
-        --                 computerCombat.DEF = entry2.parameters.DEF
-        --                 computerCombat.SPD = entry2.parameters.SPD
-        --                 print("computer used a buff")
-        --             else
-        --                 print("computer lost focus")
-        --             end
-        --         else
-        --             hitValue = (entry2.parameters.base + computerStats.ATK) * entry2.parameters.multiplier
-        --             typeBonus = getCounter(entry2.TYPE, playerStats.TYPE) -- will be 1 (default) or a 1.5x boost
-                    
-                    
-        --             if hit <= entry2.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
-        --                 -- TODO: add logic when HP becomes 0
-        --                 hitDamage = math.floor((hitValue * typeBonus) - playerStats.DEF)
-        --                 if hitDamage > 0 then
-        --                     --computerStats.HP = math.floor(computerStats.HP - damage)
-        --                     playerCombat.DMG = playerCombat.DMG + hitDamage
-        --                 else -- sets a minimum damage of 1
-        --                     playerCombat.DMG = playerCombat.DMG + 1
-        --                 end
-                        
-        --             else 
-        --                 if entry2.TYPE == "RISKY" then -- hits player back 25% hp 
-        --                     computerCombat.DMG = computerCombat.DMG + computerParty[1].stats.HP * 0.25 
-        --                 end
-                        
-        --                 --print("MISSED") -- TODO: add a miss dialogue scene
-        --             end
-        --         end
-        --     end
-        -- end
-
-        --TODO - implement buff counter
         gameState.phase = "main"
+        
+    end
     end
 end
 
