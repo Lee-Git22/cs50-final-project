@@ -13,25 +13,18 @@ function newItem(name, TYPE, value)
     }
 end
 
+
+
 ItemDatabase = {}
-    function ItemDatabase.loadInventory(Inventory)
-        
 
-        item1 = table.insert(Inventory, addItem("POTION", 4))
-        item2 = table.insert(Inventory, addItem("ANOTHER ONE", 1))
-        item3 = table.insert(Inventory, addItem("MAX POTION", 1))
-        item4 = table.insert(Inventory, addItem("TOXIC BERRY", 3))
-
-        return Inventory
-    end
 
     function ItemDatabase.load()
         
-        potion = table.insert(ItemDatabase, 
+        partytime = table.insert(ItemDatabase, 
         newItem(
-            "POTION",
-            "HEAL",
-            30
+            "PARTY TIME",
+            "RECRUIT",
+            3
         ))
 
         anotherone = table.insert(ItemDatabase, 
@@ -40,7 +33,7 @@ ItemDatabase = {}
             "RECRUIT",
             1
         ))
-
+        
         maxpotion = table.insert(ItemDatabase, 
         newItem(
             "MAX POTION",
@@ -48,13 +41,55 @@ ItemDatabase = {}
             10000
         ))
 
-        toxicberry = table.insert(ItemDatabase, 
+        
+        devilfruit = table.insert(ItemDatabase, 
         newItem(
-            "TOXIC BERRY",
+            "DEVIL FRUIT",
             "TRADEOFF",
-            10
+            20
         ))
+
+
+        
+        sodiepop = table.insert(ItemDatabase, 
+        newItem(
+            "SODIE POP",
+            "HEAL",
+            60
+        ))
+
+        potion = table.insert(ItemDatabase, 
+        newItem(
+            "POTION",
+            "HEAL",
+            20
+        ))
+
+        atkberry = table.insert(ItemDatabase, 
+        newItem(
+            "ATK BERRY",
+            "TRADEOFF",
+            20
+        ))
+
+        defberry = table.insert(ItemDatabase, 
+        newItem(
+            "DEF BERRY",
+            "TRADEOFF",
+            20
+        ))
+
+        spdberry = table.insert(ItemDatabase, 
+        newItem(
+            "SPD BERRY",
+            "TRADEOFF",
+            20
+        ))
+
+
     end
+
+
 
 return ItemDatabase
 

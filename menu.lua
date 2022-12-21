@@ -114,23 +114,61 @@ Menu = {}
         if gameState.message == "RECRUIT" then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
-            love.graphics.print(
-                string.format("%s JOINED PLAYER PARTY!", addedNames[1]),
-                font,
-                textboxX + borderSize,
-                textboxY + borderSize
-            )
+            if gameState.playerInput == "ANOTHER ONE" then
+                love.graphics.print(
+                    string.format("%s JOINED PLAYER PARTY!", addedNames[1]),
+                    font,
+                    textboxX + borderSize,
+                    textboxY + borderSize
+                )
+            elseif gameState.playerInput == "PARTY TIME" then
+                love.graphics.print(
+                    string.format("%s, %s,\nand %s\nJOINED PLAYER PARTY!", addedNames[1],addedNames[2],addedNames[3] ),
+                    font,
+                    textboxX + borderSize,
+                    textboxY + borderSize
+                )
+            end
         end
 
         if gameState.message == "TRADEOFF" then
-            -- Displays action message
-            love.graphics.setColor(0.2, 0.2, 0.2)
-            love.graphics.print(
-                string.format("%s\nLOST %s DEF AND GAINED %s ATK", playerParty[playerLead].name, negtrade, postrade ),
-                font,
-                textboxX + borderSize,
-                textboxY + borderSize
-            )
+            
+            if gameState.playerInput == "ATK BERRY" then
+                            
+                love.graphics.setColor(0.2, 0.2, 0.2)
+                love.graphics.print(
+                    string.format("%s\nLOST %s DEF AND GAINED %s ATK", playerParty[playerLead].name, negtrade, postrade ),
+                    font,
+                    textboxX + borderSize,
+                    textboxY + borderSize
+                )
+            elseif gameState.playerInput == "DEF BERRY" then
+                love.graphics.setColor(0.2, 0.2, 0.2)
+                love.graphics.print(
+                    string.format("%s\nLOST %s SPD AND GAINED %s DEF", playerParty[playerLead].name, negtrade, postrade ),
+                    font,
+                    textboxX + borderSize,
+                    textboxY + borderSize
+                )
+            elseif gameState.playerInput == "SPD BERRY" then
+                love.graphics.setColor(0.2, 0.2, 0.2)
+                love.graphics.print(
+                    string.format("%s\nLOST %s ATK AND GAINED %s SPD", playerParty[playerLead].name, negtrade, postrade ),
+                    font,
+                    textboxX + borderSize,
+                    textboxY + borderSize
+                )
+            elseif gameState.playerInput == "DEVIL FRUIT" then
+                love.graphics.setColor(0.2, 0.2, 0.2)
+                love.graphics.print(
+                    string.format("%s\n GAINED %s ATK, %s DEF, %s SPD", playerParty[playerLead].name, postrade, postrade, postrade ),
+                    font,
+                    textboxX + borderSize,
+                    textboxY + borderSize
+                )
+            end
+
+
         end
 
         if gameState.message == "SUPER EFFECTIVE!" 
@@ -221,6 +259,16 @@ Menu = {}
             )
         end
 
+        if gameState.message == "NO ITEM" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("%s HAS NO USES LEFT!", input),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
     end
 
 return Menu

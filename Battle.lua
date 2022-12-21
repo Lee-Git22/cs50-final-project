@@ -13,6 +13,24 @@ cpuCombat = {
     SPD = 1
 }
 
+-- Initialize player inventory 
+Inventory = {}
+function loadInventory(Inventory)
+    math.randomseed(os.time())
+    local pool2a = math.random(5,8)
+    local pool2b = math.random(5,8)
+
+    -- Player gets 2 random powerful pool1 items and random amounts of pool2 items
+    item1 = table.insert(Inventory, addItem(ItemDatabase[math.random(1,2)].name, 1)) -- powerful items
+    item2 = table.insert(Inventory, addItem(ItemDatabase[math.random(3,4)].name, 1)) -- powerful items
+    
+    math.randomseed(os.time())
+    item3 = table.insert(Inventory, addItem(ItemDatabase[pool2a].name, math.random(1,4)))
+    item4 = table.insert(Inventory, addItem(ItemDatabase[pool2b].name, math.random(1,4)))
+    
+    return Inventory
+end
+
 function Heal(DMG, healValue)
     DMG = DMG - healValue -- Reduce DMG based on healValue
     recovered = healValue

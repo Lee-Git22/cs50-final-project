@@ -14,9 +14,6 @@ cpuParty = {}
 AttackDataBase = {}
 ItemDatabase = {}
 
-Inventory = {}
-
-
 -- Global values used for respective game state
 gameState = {
     phase = "main",
@@ -29,11 +26,13 @@ gameState = {
 
 function love.load()  
     math.randomseed(os.time()) -- Randoms the seed everytime on launch
+
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
-    ItemsModule.loadInventory(Inventory) -- Loads in items into Inventory table
+    
     AttackModule.load() -- Loads in database into Database table
     ItemsModule.load()
 
+    Inventory = loadInventory(Inventory) -- Loads in items into Inventory table
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("Fight", function() gameState.phase = "fight" end))
     table.insert(mainButtons, Menu.newButton("Switch", function() playerCombat = resetCombat(playerCombat); playerLead = playerLead + 1 end)) -- Add this feature later
@@ -130,19 +129,35 @@ function love.update(dt)
         for i, entry in pairs(ItemDatabase) do
             if gameState.playerInput == entry.name then
                 
+
+                
                 if entry.TYPE == "HEAL" then -- Heals monster and updates gamestate message to HEAL
                     playerCombat.DMG = Heal(playerCombat.DMG, entry.value)
                 elseif entry.TYPE == "RECRUIT" then -- Adds a number of monsters to party
                     Recruit(entry.value)
                 
-                elseif entry.TYPE == "TRADEOFF" then 
-                    playerCombat.DEF, playerCombat.ATK = Tradeoff(playerCombat.DEF, playerCombat.ATK, (playerParty[playerLead].stats.DEF * 0.5), entry.value)
+                elseif entry.TYPE == "TRADEOFF" then
+                    if entry.name == "ATK BERRY" then
+                        playerStats.DEF, playerStats.ATK = Tradeoff(playerStats.DEF, playerStats.ATK, (playerParty[playerLead].stats.DEF * 0.5), entry.value)
+                    elseif entry.name == "DEF BERRY" then
+                        playerStats.SPD, playerStats.DEF = Tradeoff(playerStats.SPD, playerStats.DEF, (playerParty[playerLead].stats.SPD * 0.5), entry.value)
+                    elseif entry.name == "SPD BERRY" then
+                        playerStats.ATK, playerStats.SPD = Tradeoff(playerStats.SPD, playerStats.SPD, (playerParty[playerLead].stats.ATK * 0.5), entry.value)
+                    elseif entry.name == "DEVIL FRUIT" then
+                        local tmp = 0
+                        tmp, playerStats.ATK = Tradeoff(tmp, playerStats.ATK, 0, entry.value)
+                        tmp, playerStats.DEF = Tradeoff(tmp, playerStats.DEF, 0, entry.value)
+                        tmp, playerStats.SPD = Tradeoff(tmp, playerStats.SPD, 0, entry.value)
+                    end
+                    
+                    
                 end
 
                 gameState.phase = "playerAction"
                 gameState.timer = 0
             end 
         end
+        
     end
 
     if gameState.phase == "cpuRound" and gameState.turn == "cpu" then
@@ -300,25 +315,48 @@ function love.draw()
             if leftClick and hot and gameState.timer > 0.3 then
                 gameState.timer = 0
 
-                gameState.message = "item"
                 gameState.playerInput = items.name
+
+                if items.uses <= 0 then
+                    items.uses = 0
+                    gameState.message = "NO ITEM"
+                    gameState.phase = "ERROR"
+                else
+                    gameState.message = "item"
                 
-                gameState.computerInput = getCPUmove() -- Get computers move
+                
+                    gameState.computerInput = getCPUmove() -- Get computers move
+    
+                    turn = 1
+                    -- When using item, player always goes first
+                    gameState.turn = "player"
+                    gameState.phase = "dialogue"
+                    items.uses = items.uses - 1 
+    
+    
+                    gameState.timer = 0
+                end
 
-                turn = 1
-                -- When using item, player always goes first
-                gameState.turn = "player"
-                gameState.phase = "dialogue"
-                items.uses = items.uses - 1 
-
-
-                gameState.timer = 0
+               
 
             end
 
             Menu.loadButton(buttonColor, string.format("%s x %s", items.name, items.uses), buttonX, buttonY, buttonWidth)
             
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
+        end
+    end
+
+    if gameState.phase == "ERROR" then
+        cursoyY = 0
+        Menu.loadDialogue(gameState, nil, gameState.playerInput)
+        
+        -- Change this to be a keypress later
+        if gameState.timer >= 1.5 then
+
+            gameState.phase = "main"
+            gameState.timer = 0
+
         end
     end
 
