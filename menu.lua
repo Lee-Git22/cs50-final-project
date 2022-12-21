@@ -53,11 +53,6 @@ Menu = {}
         local textboxY = winHeight - BOX_HEIGHT 
         local textboxWidth = BOX_WIDTH - borderSize
         local textboxHeight = BOX_HEIGHT - borderSize
-
-        -- local actions = {
-        --     attack = "attack",
-        --     consumable = "consumable",
-        -- }
         
         monsterName = monsterName
         input = input
@@ -72,7 +67,7 @@ Menu = {}
             textboxHeight
         )
 
-        if gameState.action == "attack" then
+        if gameState.message == "attack" then
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -83,7 +78,7 @@ Menu = {}
             )
         end
 
-        if gameState.action == "consumable" then
+        if gameState.message == "consumable" then
             -- Draws consumable text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -94,82 +89,94 @@ Menu = {}
             )
         end
 
-        if gameState.action == "SUPER EFFECTIVE!" 
-        or gameState.action == "NOT VERY EFFECTIVE..." then
+        if gameState.message == "SUPER EFFECTIVE!" 
+        or gameState.message == "NOT VERY EFFECTIVE..." then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("IT IS %s", gameState.action),
+                string.format("IT IS %s", gameState.message),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
             )
         end
         
-        if gameState.action == "BUFF" then
+        if gameState.message == "BUFF" then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s IS RAMPING UP", Self.name),
+                string.format("%s IS RAMPING UP", monsterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
             )
         end
 
-        if gameState.action == "DEBUFF" then
+        if gameState.message == "DEBUFF" then
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s IS SHOOK", Opponent.name),
+                string.format("%s IS SHOOK!", monsterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
             )
         end
         
-        if gameState.action == "MISS" then
+        if gameState.message == "MISS" then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("IT MISSED"),
+                string.format("%s MISSED", monsterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
             )
         end
 
-        if gameState.action == "RISKY" then
+        if gameState.message == "RISKY" then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("IT MISSED AND HURT ITSELF"),
+                string.format("%s MISSED AND HURT ITSELF", monsterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
             )
         end
 
-        if gameState.action == "FAINT" then
+        if gameState.message == "FAINT" then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s FAINTED", Opponent.name),
+                string.format("%s FAINTED", monsterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
             )
         end
 
-        if gameState.action == "cpuswitch" then
+        if gameState.message == "cpuswitch" then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("Computer SENDS %s", cpuParty[cpuLead].name),
+                string.format("CPU sends out %s", monsterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
             )
         end
+
+        if gameState.message == "playerswitch" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("Player sends out %s", monsterName),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
     end
 
 return Menu

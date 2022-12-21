@@ -29,7 +29,6 @@ function getCounter(type1, type2)
 end
 
 function resetCombat(table)
-    
         table.DMG = 0
         table.ATK = 1
         table.DEF = 1
@@ -46,10 +45,15 @@ function calcBuff(gameState, entry, table)
         table.DEF = table.DEF * entry.parameters.DEF
         table.SPD = table.SPD * entry.parameters.SPD
        
-        gameState.action = "BUFF" -- NEEDS WORK
+        if entry.TYPE == "BUFF" then
+            gameState.message = "BUFF" -- NEEDS WORK
+        else 
+            gameState.message = "DEBUFF"
+            print("debug debuff")
+        end
         return gameState, table
     else
-        gameState.action = "MISS"
+        gameState.message = "MISS"
         return gameState, table
     end
     return gameState, table
@@ -65,11 +69,11 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
         hitDamage = math.floor((hitValue * typeBonus) - stat2.DEF) -- dmg calc
         
         if typeBonus == 1.25 then 
-            gameState.action = "SUPER EFFECTIVE!"
+            gameState.message = "SUPER EFFECTIVE!"
         end
 
         if typeBonus == 0.8 then
-            gameState.action = "NOT VERY EFFECTIVE..."
+            gameState.message = "NOT VERY EFFECTIVE..."
         end
 
         if hitDamage > 0 then
@@ -82,7 +86,7 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
         if comb2.DMG >= Opponent.stats.HP then -- For killing blows
             comb2.DMG = Opponent.stats.HP -- Set damage equal to max HP
             
-            gameState.action = "FAINT"
+            gameState.message = "FAINT"
             print("reset combat")
 
         end
@@ -90,15 +94,15 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
         return gameState, entry, comb1, stat1, comb2, stat2
 
     else  -- Miss
-        gameState.action = "MISS"
+        gameState.message = "MISS"
 
         if entry.TYPE == "RISKY" then -- hits self for 12.5% hp 
             comb1.DMG = comb1.DMG + math.floor(Self.stats.HP * 0.125)
-            gameState.action = "RISKY"
+            gameState.message = "RISKY"
 
             if comb1.DMG >= Self.stats.HP then
                 comb1.DMG = Self.stats.HP 
-                gameState.action = "SELF FAINT" -- change later
+                gameState.message = "SELF FAINT" -- change later
             end
         end
         return gameState, entry, comb1, stat1, comb2, stat2

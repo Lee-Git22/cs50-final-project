@@ -35,7 +35,7 @@ AttackDataBase = {}
         newEntry(
             "BIG ONE",
             "RISKY",
-            Attack(50, 1, 0.33)
+            Attack(50, 1, 0.1)
         ))
 
         hardd = table.insert(AttackDataBase, 

@@ -17,9 +17,9 @@ AttackDataBase = {}
 -- Global values used for respective game state
 gameState = {
     phase = "main",
-    action = "attack",
-    playerInput = "",
-    computerInput = "",
+    message = "",
+    playerInput = "", -- the move player chooses for the round
+    computerInput = "", -- computers move for the round 
     timer = 0
 }
 
@@ -109,14 +109,12 @@ function love.update(dt)
                 
                 elseif entry.TYPE == "DEBUFF" then
                     gameState, cpuCombat = calcBuff(gameState, entry, cpuCombat)
-                    gameState.action = "DEBUFF"
-
                 else -- For attacks
                     gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats = 
                     calcAttack(gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats)
                 end
                 
-                if gameState.action == "FAINT" then
+                if gameState.message == "FAINT" then
                     gameState.timer = 0
                     gameState.phase = "FAINT"
                 else
@@ -142,14 +140,14 @@ function love.update(dt)
 
                 elseif entry.TYPE == "DEBUFF" then                   
                     gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
-                    gameState.action = "DEBUFF"
+                    -- gameState.message = "DEBUFF"
                 else 
                     -- For attacks
                     gameState, entry, cpuCombat, cpuStats, playerCombat, playerStats = 
                     calcAttack(gameState, entry, cpuCombat, cpuStats, playerCombat, playerStats)
                 end
 
-                if gameState.action == "FAINT" then
+                if gameState.message == "FAINT" then
                     gameState.timer = 0
                     gameState.phase = "FAINT"
                     
@@ -243,8 +241,9 @@ function love.draw()
             if leftClick and hot and gameState.timer >= 0.3 then
                 gameState.timer = 0
     
-                gameState.action = "attack"
+                gameState.message = "attack"
                 gameState.playerInput = moves
+
                 gameState.phase = "dialogue"
             end
             
@@ -275,7 +274,7 @@ function love.draw()
             if leftClick and hot and gameState.timer > 0.3 then
                 gameState.timer = 0
 
-                gameState.action = "consumable"
+                gameState.message = "consumable"
                 gameState.playerInput = items.name
                 gameState.phase = "dialogue"
 
@@ -301,23 +300,28 @@ function love.draw()
     end
 
     if gameState.phase == "playerAction" then
+        --print(string.format("debug: %s %s %s",gameState, playerParty[playerLead].name, gameState.playerInput ))
         Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
 
         if gameState.timer >= 1.5 then
-            gameState.phase = "cpuDialogue"
+            
+            gameState.phase = "cpuDialogue" 
+            gameState.computerInput = getCPUmove() -- Get computers move
             gameState.timer = 0
-            gameState.computerInput = getCPUmove()
         end
     end
 
     if gameState.phase == "cpuDialogue" then
         
-        gameState.action = "attack"
+        
+
+        gameState.message = "attack"
         Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
         
         -- Change this to be a keypress later
         if gameState.timer >= 1.5 then
             gameState.phase = "cpuRound"
+            gameState.timer = 0
         end
         
     end
@@ -327,43 +331,78 @@ function love.draw()
 
         if gameState.timer >= 1.5 then
             gameState.phase = "main"
-        end
-    end
-
-    if gameState.phase == "FAINT" then
-        Menu.loadDialogue(gameState, Opponent, gameState.computerInput)
-        
-        if gameState.timer >= 1.5 then
             gameState.timer = 0
-            cpuUI = false
-            gameState.phase = "switch" 
         end
     end
 
-    if gameState.phase == "switch" then
-        Menu.loadDialogue(gameState, Opponent, gameState.computerInput)
-        
-        
+    if gameState.phase == "FAINT" then       
+        Menu.loadDialogue(gameState, Opponent.name) -- Displays X monster FAINTED 
         
         if gameState.timer >= 1.5 then
-            cpuUI = true
-            cpuCombat = resetCombat(cpuCombat);
-            cpuLead = cpuLead + 1
             
-            gameState.timer = 0
-            gameState.action = "cpuswitch"
+            -- Determine which side fainted
+            if cpuStats.HP == 0 then
+                cpuUI = false
+                gameState.phase = "cpuSelect" -- cpu switch
+                gameState.timer = 0 
+            else 
+                playerUI = false
+                gameState.phase = "playerSelect" -- player switch
+                gameState.timer = 0
+            end
+
+            
+            
+        end
+    end
+
+    if gameState.phase == "cpuSelect" then
+        -- keeps X is FAINTED on the screen
+        --Menu.loadDialogue(gameState, Opponent)
+        
+        if gameState.timer >= 1 then
+            
+            cpuCombat = resetCombat(cpuCombat) -- resets combat stats for next monster
+            cpuLead = cpuLead + 1 -- shift party up by 1
+
+            cpuUI = true 
+            
+            gameState.message = "cpuswitch"
             gameState.phase = "cpuswitch"
+            gameState.timer = 0
         end
 
     end
 
     if gameState.phase == "cpuswitch" then
-        Menu.loadDialogue(gameState, cpuParty[cpuLead], gameState.computerInput)
+        --displays CPU sends out X 
+        Menu.loadDialogue(gameState, cpuParty[cpuLead].name)
         if gameState.timer >= 1.5 then
-            gameState.timer = 0
             gameState.phase = "main"
+            gameState.timer = 0
         end
     end
     
+    if gameState.phase == "playerSelect" then
+        if gameState.timer >= 0.5 then
+            playerCombat = resetCombat(playerCombat)
+            playerLead = playerLead + 1
+
+            playerUI = true
+
+            gameState.message = "playerswitch"
+            gameState.phase = "playerswitch"
+            gameState.timer = 0
+        end
+    end
+
+    if gameState.phase == "playerswitch" then
+        --displays CPU sends out X 
+        Menu.loadDialogue(gameState, playerParty[playerLead].name)
+        if gameState.timer >= 1.5 then
+            gameState.phase = "main"
+            gameState.timer = 0
+        end
+    end
     -- NOTES FOR TOMORROW - add logic for switching player, clean up game phase and action manip 
 end
