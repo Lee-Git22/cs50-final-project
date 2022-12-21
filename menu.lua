@@ -123,7 +123,7 @@ Menu = {}
                 )
             elseif gameState.playerInput == "PARTY TIME" then
                 love.graphics.print(
-                    string.format("%s, %s,\nand %s\nJOINED PLAYER PARTY!", addedNames[1],addedNames[2],addedNames[3] ),
+                    string.format("%s and %s \nJOINED PLAYER PARTY!", addedNames[1],addedNames[2]),
                     font,
                     textboxX + borderSize,
                     textboxY + borderSize
@@ -269,6 +269,30 @@ Menu = {}
                 textboxY + borderSize
             )
         end
+
+        if gameState.message == "WIN" then
+        -- Displays action message
+        love.graphics.setColor(0.2, 0.2, 0.2)
+        love.graphics.print(
+            string.format("COMPUTER IS OUT OF FIGHTERS!\nYOU WON THE CULTURE WAR!"),
+            font,
+            textboxX + borderSize,
+            textboxY + borderSize
+        )
+        end
+
+        if gameState.message == "LOSE" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("YOU ARE OUT OF FIGHTERS!\nYOU LOST THE CULTURE WAR..."),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+            end
+
     end
+
 
 return Menu

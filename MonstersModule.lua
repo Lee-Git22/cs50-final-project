@@ -33,10 +33,10 @@ MonstersIndex = {}
             "BIG CHUNGUS", 
             stats(
                 "ANIMAL",
-                20,
-                45,
-                30,
-                25), 
+                200,
+                35,
+                50,
+                35), 
             moveset(
                 "BITE", 
                 "BIG ONE", 
@@ -49,10 +49,10 @@ MonstersIndex = {}
             "LEBRON JAMES", 
             stats(
                 "HUMAN",
+                140,
+                35,
                 20,
-                45,
-                10,
-                10), 
+                5), 
             moveset(
                 "FREE THROW", 
                 "SPACE JAM DUNK", 
@@ -65,12 +65,12 @@ MonstersIndex = {}
             "BREW MONKEY", 
             stats(
                 "ANIMAL",
-                150,
-                55,
+                120,
+                70,
                 35,
-                40), 
+                60), 
             moveset(
-                "THUNDER BOLT", 
+                "SURF", 
                 "CHUG CHUG", 
                 "CHEAP SHOT",
                 "TURKEY SLAM")
@@ -81,10 +81,10 @@ MonstersIndex = {}
             "GPT-3", 
             stats(
                 "MACHINE",
-                160,
-                55,
-                10,
-                100), 
+                190,
+                30,
+                30,
+                45), 
             moveset(
                 "DOWNLOAD", 
                 "DEEP LEARN", 
@@ -98,12 +98,12 @@ MonstersIndex = {}
             stats(
                 "MAGIC",
                 115,
-                55,
+                100,
                 10,
                 50), 
             moveset(
                 "TURKEY SLAM", 
-                "HARD D", 
+                "SURF", 
                 "SLAP",
                 "THUNDER BOLT")
         ))
@@ -129,10 +129,10 @@ MonstersIndex = {}
             "IRON MAN",
             stats(
                 "MACHINE",
-                20,
+                210,
                 55,
-                40,
-                25), 
+                30,
+                10), 
             moveset(
                 "CHUG CHUG", 
                 "DOWNLOAD", 
@@ -145,10 +145,10 @@ MonstersIndex = {}
             "PIE DUCK",
             stats(
                 "ANIMAL",
-                20,
-                55,
-                15,
-                10), 
+                175,
+                48,
+                35,
+                20), 
             moveset(
                 "NO TROUBLE", 
                 "FREE THROW", 
@@ -161,10 +161,10 @@ MonstersIndex = {}
             "KRATOS",
             stats(
                 "MAGIC",
-                20,
-                65,
-                15,
-                20), 
+                240,
+                45,
+                0,
+                30), 
             moveset(
                 "FREE THROW", 
                 "CURSE", 

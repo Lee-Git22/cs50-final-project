@@ -24,7 +24,7 @@ ItemDatabase = {}
         newItem(
             "PARTY TIME",
             "RECRUIT",
-            3
+            2
         ))
 
         anotherone = table.insert(ItemDatabase, 

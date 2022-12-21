@@ -16,16 +16,15 @@ cpuCombat = {
 -- Initialize player inventory 
 Inventory = {}
 function loadInventory(Inventory)
-    math.randomseed(os.time())
-    local pool2a = math.random(5,8)
-    local pool2b = math.random(5,8)
+    local pool2a = math.random(4,7)
+    local pool2b = math.random(4,7)
 
     -- Player gets 2 random powerful pool1 items and random amounts of pool2 items
     item1 = table.insert(Inventory, addItem(ItemDatabase[math.random(1,2)].name, 1)) -- powerful items
     item2 = table.insert(Inventory, addItem(ItemDatabase[math.random(3,4)].name, 1)) -- powerful items
-    
-    math.randomseed(os.time())
     item3 = table.insert(Inventory, addItem(ItemDatabase[pool2a].name, math.random(1,4)))
+
+    math.randomseed(love.mouse.getPosition())
     item4 = table.insert(Inventory, addItem(ItemDatabase[pool2b].name, math.random(1,4)))
     
     return Inventory
@@ -51,6 +50,7 @@ function Recruit(value) -- Adds number amount of monsters into party
         table.insert(playerParty, MonstersIndex[tmp])
         table.insert(addedNames, MonstersIndex[tmp].name) 
     end
+    playerPartySize = playerPartySize + value
     gameState.message = "RECRUIT"
 end
 
@@ -138,8 +138,6 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
             comb2.DMG = Opponent.stats.HP -- Set damage equal to max HP
             
             gameState.message = "FAINT"
-            print("reset combat")
-
         end
 
         return gameState, entry, comb1, stat1, comb2, stat2
@@ -152,8 +150,8 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
             gameState.message = "RISKY"
 
             if comb1.DMG >= Self.stats.HP then
-                comb1.DMG = Self.stats.HP 
-                gameState.message = "SELF FAINT" -- change later
+                comb1.DMG = Self.stats.HP - 1
+                gameState.message = "RISKY" -- change later
             end
         end
         return gameState, entry, comb1, stat1, comb2, stat2

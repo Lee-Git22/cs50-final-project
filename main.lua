@@ -24,7 +24,9 @@ gameState = {
     timer = 0
 }
 
-function love.load()  
+function love.load()
+    test = love.graphics.newImage("canvas.png")  
+
     math.randomseed(os.time()) -- Randoms the seed everytime on launch
 
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
@@ -34,22 +36,25 @@ function love.load()
 
     Inventory = loadInventory(Inventory) -- Loads in items into Inventory table
     -- Options for main menu
-    table.insert(mainButtons, Menu.newButton("Fight", function() gameState.phase = "fight" end))
-    table.insert(mainButtons, Menu.newButton("Switch", function() playerCombat = resetCombat(playerCombat); playerLead = playerLead + 1 end)) -- Add this feature later
-    table.insert(mainButtons, Menu.newButton("Item", function() gameState.phase = "item" end))
-    table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
+    table.insert(mainButtons, Menu.newButton("FIGHT", function() gameState.phase = "fight" end))
+    table.insert(mainButtons, Menu.newButton("PARTY", function() playerCombat = resetCombat(playerCombat)
+        playerLead = playerLead + 1 end)) 
+    table.insert(mainButtons, Menu.newButton("ITEM", function() gameState.phase = "item" end))
+    table.insert(mainButtons, Menu.newButton("QUIT", function() love.event.quit(0) end)) 
     
     -- Loads in 3 monsters for player and 4 for cpu
-    for i = 1,3,1
+    playerPartySize = 4
+    for i = 1,playerPartySize,1
     do
         local tmp = math.random(1,9)
-        table.insert(playerParty, MonstersIndex[i]) 
+        table.insert(playerParty, MonstersIndex[tmp]) 
     end
-    
-    for i = 1,4,1
+
+    cpuPartySize = 5
+    for i = 1,cpuPartySize,1
     do
         local tmp = math.random(1,9)
-        table.insert(cpuParty, MonstersIndex[i])
+        table.insert(cpuParty, MonstersIndex[tmp])
     end
 
     -- Sets first monster in party as party leader (default parameter)
@@ -58,6 +63,8 @@ function love.load()
 
     playerUI = true
     cpuUI = true
+
+    
 end
 
 function love.update(dt)
@@ -143,11 +150,11 @@ function love.update(dt)
                         playerStats.SPD, playerStats.DEF = Tradeoff(playerStats.SPD, playerStats.DEF, (playerParty[playerLead].stats.SPD * 0.5), entry.value)
                     elseif entry.name == "SPD BERRY" then
                         playerStats.ATK, playerStats.SPD = Tradeoff(playerStats.SPD, playerStats.SPD, (playerParty[playerLead].stats.ATK * 0.5), entry.value)
-                    elseif entry.name == "DEVIL FRUIT" then
-                        local tmp = 0
-                        tmp, playerStats.ATK = Tradeoff(tmp, playerStats.ATK, 0, entry.value)
-                        tmp, playerStats.DEF = Tradeoff(tmp, playerStats.DEF, 0, entry.value)
-                        tmp, playerStats.SPD = Tradeoff(tmp, playerStats.SPD, 0, entry.value)
+                    -- elseif entry.name == "DEVIL FRUIT" then
+                    --     local tmp = 0
+                    --     tmp, playerStats.ATK = Tradeoff(tmp, playerStats.ATK, 0, entry.value)
+                    --     tmp, playerStats.DEF = Tradeoff(tmp, playerStats.DEF, 0, entry.value)
+                    --     tmp, playerStats.SPD = Tradeoff(tmp, playerStats.SPD, 0, entry.value)
                     end
                     
                     
@@ -194,7 +201,7 @@ function love.update(dt)
             end
         end       
     end
-
+    math.randomseed(love.mouse.getPosition())
     --print(string.format("gamestate.phase: %s\ngamestate.turn: %s\ngamestate.message: %s", gameState.phase, gameState.turn, gameState.message))
 end
 
@@ -209,6 +216,7 @@ function love.draw()
     end
     if cpuUI then
         UI.drawEnemy()
+        --love.graphics.draw(test, 0,0)
     end
     
     -- Switch to Main menu
@@ -266,7 +274,8 @@ function love.draw()
 
             Menu.loadButton(buttonColor, moves, buttonX, buttonY, buttonWidth)
 
-            local leftClick = love.mouse.isDown(1) 
+            local leftClick = love.mouse.isDown(1)
+            
             if leftClick and hot and gameState.timer >= 0.3 then
                 gameState.timer = 0
     
@@ -286,6 +295,12 @@ function love.draw()
                  end
 
                 
+            end
+
+            local rightClick = love.mouse.isDown(2) 
+            if rightClick and gameState.timer >= 0.3 then
+                gameState.phase = "main"
+                gameState.timer = 0
             end
             
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
@@ -332,13 +347,16 @@ function love.draw()
                     gameState.turn = "player"
                     gameState.phase = "dialogue"
                     items.uses = items.uses - 1 
-    
-    
+        
                     gameState.timer = 0
                 end
 
-               
+            end
 
+            local rightClick = love.mouse.isDown(2) 
+            if rightClick and gameState.timer >= 0.3 then
+                gameState.phase = "main"
+                gameState.timer = 0
             end
 
             Menu.loadButton(buttonColor, string.format("%s x %s", items.name, items.uses), buttonX, buttonY, buttonWidth)
@@ -456,11 +474,20 @@ function love.draw()
             cpuCombat = resetCombat(cpuCombat) -- resets combat stats for next monster
             cpuLead = cpuLead + 1 -- shift party up by 1
 
-            cpuUI = true 
+            if cpuLead > cpuPartySize then
+                cpuLead = 1
+                gameState.message = "WIN"
+                gameState.phase = "WIN"
+                gameState.timer = 0
+            else
+                cpuUI = true 
             
-            gameState.message = "cpuswitch"
-            gameState.phase = "cpuswitch"
-            gameState.timer = 0
+                gameState.message = "cpuswitch"
+                gameState.phase = "cpuswitch"
+                gameState.timer = 0
+            end
+
+
         end
 
     end
@@ -479,11 +506,18 @@ function love.draw()
             playerCombat = resetCombat(playerCombat)
             playerLead = playerLead + 1
 
-            playerUI = true
+            if playerLead > playerPartySize then
+                playerLead = 1
+                gameState.message = "LOSE"
+                gameState.phase = "LOSE"
+                gameState.timer = 0
+            else
+                playerUI = true
 
-            gameState.message = "playerswitch"
-            gameState.phase = "playerswitch"
-            gameState.timer = 0
+                gameState.message = "playerswitch"
+                gameState.phase = "playerswitch"
+                gameState.timer = 0
+            end
         end
     end
 
@@ -496,5 +530,21 @@ function love.draw()
         end
     end
 
+    if gameState.phase == "WIN" then
+        Menu.loadDialogue(gameState)
+
+        if gameState.timer >= 10000 then
+            
+        end
+    end
+
+    if gameState.phase == "LOSE" then
+        Menu.loadDialogue(gameState)
+
+        if gameState.timer >= 10000 then
+            
+        end
+    end
+    
     -- NOTES FOR TOMORROW - add logic for items, add animations - right now game flow is correct but items have no functions and uses dont decrease
 end

@@ -35,29 +35,23 @@ AttackDataBase = {}
         newEntry(
             "BIG ONE",
             "RISKY",
-            Attack(50, 1, 0.1)
+            Attack(50, 1.5, 0.33)
         ))
 
         hardd = table.insert(AttackDataBase, 
         newEntry(
             "HARD D",
             "RISKY",
-            Attack(20, 1.25, 0.70)
+            Attack(40, 1.15, 0.75)
         ))
 
-        turkeyshot = table.insert(AttackDataBase, 
+        turkeyslam = table.insert(AttackDataBase, 
         newEntry(
             "TURKEY SLAM",
             "RISKY",
             Attack(25, 1, 0.75)
         ))
 
-        download = table.insert(AttackDataBase, 
-        newEntry(
-            "DOWNLOAD",
-            "RISKY",
-            Attack(0, 1.35, 0.70)
-        ))
 
         -- MAGIC MOVES --------------------------------
         piecic = table.insert(AttackDataBase, 
@@ -126,25 +120,33 @@ AttackDataBase = {}
             Attack(40, 1.15, 1)
         ))
 
+        surf = table.insert(AttackDataBase, 
+        newEntry(
+            "SURF",
+            "HUMAN",
+            Attack(50, 0.8, 0.925)
+        ))
+
+        --BUFF/DEBUFFS --------------------------------
         notrouble = table.insert(AttackDataBase, 
         newEntry(
             "NO TROUBLE",
             "BUFF", 
-            Buff(1, 1.35, 1, 0.95)
+            Buff(1, 1.25, 1, 0.75)
         ))
 
         curse = table.insert(AttackDataBase,
         newEntry(
             "CURSE",
             "DEBUFF",  
-            Buff(1, 0.5, 0.5, 1)
+            Buff(1.15, 0.5, 0.5, 0.85)
         ))
 
         deeplearn = table.insert(AttackDataBase, 
         newEntry(
             "DEEP LEARN",
-            "BUFF", -- change to debuff 
-            Buff(1.1, 1.1, 1.1, 0.95)
+            "BUFF", 
+            Buff(1.38, 1, 0.8, 0.85)
         ))
 
         chugchug = table.insert(AttackDataBase, 
@@ -158,7 +160,7 @@ AttackDataBase = {}
         newEntry(
             "GOAT MODE",
             "BUFF",
-            Buff(2, 2, 2, 1) 
+            Buff(2, 1, 2, 0.85) 
         ))
 
         spartanrage = table.insert(AttackDataBase, 
@@ -167,7 +169,13 @@ AttackDataBase = {}
             "BUFF",
             Buff(2, 2, 2, 1) 
         ))
-        
+
+        download = table.insert(AttackDataBase, 
+        newEntry(
+            "DOWNLOAD",
+            "DEBUFF",
+            Buff(1, 0.8, 0.8, 0.85)
+        ))
     end
        
 return AttackDataBase
