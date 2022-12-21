@@ -110,7 +110,7 @@ Menu = {}
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s IS RAMPING UP", buffTarget),
+                string.format("%s IS RAMPING UP", Self.name),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -120,7 +120,7 @@ Menu = {}
         if gameState.action == "DEBUFF" then
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s IS SHOOK", curseTarget),
+                string.format("%s IS SHOOK", Opponent.name),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -149,6 +149,27 @@ Menu = {}
             )
         end
 
+        if gameState.action == "FAINT" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("%s FAINTED", Opponent.name),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
+        if gameState.action == "cpuswitch" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("Computer SENDS %s", cpuParty[cpuLead].name),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
     end
 
 return Menu

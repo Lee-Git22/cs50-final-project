@@ -11,7 +11,7 @@ Inventory = {}
 
 MonstersIndex = {}
 playerParty = {}
-computerParty = {}
+cpuParty = {}
 AttackDataBase = {}
 
 -- Global values used for respective game state
@@ -24,38 +24,44 @@ gameState = {
 }
 
 function love.load()  
+    math.randomseed(os.time()) -- Randoms the seed everytime on launch
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
     ItemsModule.load() -- Loads in items into Inventory table
     AttackModule.load() -- Loads in database into Database table
 
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("Fight", function() gameState.phase = "fight" end))
-    table.insert(mainButtons, Menu.newButton("Switch", function() print("TBD") end))
+    table.insert(mainButtons, Menu.newButton("Switch", function() cpuCombat = resetCombat(cpuCombat); cpuLead = cpuLead + 1 end)) -- Add this feature later
     table.insert(mainButtons, Menu.newButton("Item", function() gameState.phase = "item" end))
     table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
     
-    -- fix later with randomized loop 
-    for i = 1,5,1
+    -- Loads in 3 monsters for player and 4 for cpu
+    for i = 1,3,1
     do
+        local tmp = math.random(1,9)
         table.insert(playerParty, MonstersIndex[i]) 
     end
     
-    for i = 1,5,1
+    for i = 1,4,1
     do
-        table.insert(computerParty, MonstersIndex[i])
+        local tmp = math.random(1,9)
+        table.insert(cpuParty, MonstersIndex[i])
     end
 
+    -- Sets first monster in party as party leader (default parameter)
+    playerLead = 1 
+    cpuLead = 1
 
-
+    playerUI = true
+    cpuUI = true
 end
 
 function love.update(dt)
-    gameState.timer = gameState.timer + dt
+    gameState.timer = gameState.timer + dt -- Used for menu display and to stop accidental double clicks
+
+
     
-    playerLead = 1 -- placeholder name
-    computerLead = 3
-    
-    --initialize battle parameters
+    -- Stats used for battle calculations for the current monsters in battle
     playerStats = {
         TYPE = playerParty[playerLead].stats.TYPE,
         HP = playerParty[playerLead].stats.HP - playerCombat.DMG,
@@ -64,110 +70,119 @@ function love.update(dt)
         SPD = playerParty[playerLead].stats.SPD * playerCombat.SPD,
     }
 
-    computerStats = {
-        TYPE = computerParty[computerLead].stats.TYPE,
-        HP = computerParty[computerLead].stats.HP - computerCombat.DMG,
-        ATK = computerParty[computerLead].stats.ATK * computerCombat.ATK,
-        DEF = computerParty[computerLead].stats.DEF * computerCombat.DEF,
-        SPD = computerParty[computerLead].stats.SPD * computerCombat.SPD
+    cpuStats = {
+        TYPE = cpuParty[cpuLead].stats.TYPE,
+        HP = cpuParty[cpuLead].stats.HP - cpuCombat.DMG,
+        ATK = cpuParty[cpuLead].stats.ATK * cpuCombat.ATK,
+        DEF = cpuParty[cpuLead].stats.DEF * cpuCombat.DEF,
+        SPD = cpuParty[cpuLead].stats.SPD * cpuCombat.SPD
     }
 
-    if playerStats.SPD >= computerStats.SPD then
-        local move1 = "player"
-        local move2 = "computer"
-    else
-        local move1 = "computer"
-        local move2 = "player"
-    end
+    -- Load the moves for first monster in party      
+    playerList = {
+        playerParty[playerLead].moveset.move1, 
+        playerParty[playerLead].moveset.move2, 
+        playerParty[playerLead].moveset.move3, 
+        playerParty[playerLead].moveset.move4
+    }
+    -- if playerStats.SPD >= computerStats.SPD then
+    --     local move1 = "player"
+    --     local move2 = "computer"
+    -- else
+    --     local move1 = "computer"
+    --     local move2 = "player"
+    -- end
 
     
-
+    -- For player round
     if gameState.phase == "playerRound" then
-        buffTarget = playerParty[playerLead].name
-        curseTarget = computerParty[computerLead].name
-        -- For player round
-        for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack
+
+        -- Change targets for battle message display
+        Self = playerParty[playerLead]
+        Opponent = cpuParty[cpuLead]
+
+        for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack selected
             if gameState.playerInput == entry.name then
-                print("PLAYER ROUND")
+                
                 if entry.TYPE == "BUFF" then
-                    
                     gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
-                    --print(gameState.action)
+                
+                elseif entry.TYPE == "DEBUFF" then
+                    gameState, cpuCombat = calcBuff(gameState, entry, cpuCombat)
+                    gameState.action = "DEBUFF"
 
-                else if entry.TYPE == "DEBUFF" then
-                    
-                    gameState, computerCombat = calcBuff(gameState, entry, computerCombat)
-                    --print(gameState.action)
-
-                    else 
-                        -- For attacks
-                        gameState, entry, playerCombat, playerStats, computerCombat, computerStats = 
-                        calcAttack(gameState, entry, playerCombat, playerStats, computerCombat, computerStats)
-
-                        print("FINISH ATTACK")
-                        --gameState.action = "SUPER EFFECTIVE"
-                        gameState.phase = "playerAction"
-
-                    end
-                    
+                else -- For attacks
+                    gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats = 
+                    calcAttack(gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats)
                 end
-
-                gameState.timer = 0
-                gameState.phase = "playerAction"
-
+                
+                if gameState.action == "FAINT" then
+                    gameState.timer = 0
+                    gameState.phase = "FAINT"
+                else
+                    gameState.timer = 0
+                    gameState.phase = "playerAction"
+                end
+                -- Reset timer for next message
+                
             end
         end
-
     end
-
-
 
     if gameState.phase == "cpuRound" then
-        buffTarget = computerParty[computerLead].name
-        curseTarget = playerParty[playerLead].name
-        -- For computer round
+
+        Self = cpuParty[cpuLead]
+        Opponent = playerParty[playerLead]
+
         for i, entry in pairs(AttackDataBase) do
             if gameState.computerInput == entry.name then
-                print("COMPUTER ROUND")
+                
                 if entry.TYPE == "BUFF" then
-                    
-                    gameState, computerCombat = calcBuff(gameState, entry, computerCombat)
-                    print(string.format("computer move: %s", gameState.computerInput))
-                    print(gameState.action)
+                    gameState, cpuCombat = calcBuff(gameState, entry, cpuCombat)
 
-                else if entry.TYPE == "DEBUFF" then
-                    
+                elseif entry.TYPE == "DEBUFF" then                   
                     gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
-                    print(string.format("computer move: %s", gameState.computerInput))
-                    print(gameState.action)
-
-                    else 
-                        -- For attacks
-                        gameState, entry, computerCombat, computerStats, playerCombat, playerStats = 
-                        calcAttack(gameState, entry, computerCombat, computerStats, playerCombat, playerStats)
-                        
-                        print(string.format("computer move: %s", gameState.computerInput))
-                        print(gameState.action)
-                    end
+                    gameState.action = "DEBUFF"
+                else 
+                    -- For attacks
+                    gameState, entry, cpuCombat, cpuStats, playerCombat, playerStats = 
+                    calcAttack(gameState, entry, cpuCombat, cpuStats, playerCombat, playerStats)
                 end
+
+                if gameState.action == "FAINT" then
+                    gameState.timer = 0
+                    gameState.phase = "FAINT"
+                    
+                else
+                    gameState.timer = 0
+                    gameState.phase = "cpuAction"  
+                end
+
             end
-            gameState.timer = 0
-            gameState.phase = "cpuAction"    
-        end
-
-
-       
+        end       
     end
+    -- end
 end
 
 function love.draw()
-    --print(gameState.phase)
+
     -- Represents current button y position
     local cursorY = 0
 
+
     UI.drawBackground()
-    UI.drawPlayer()
-    UI.drawEnemy()
+
+    if playerUI then 
+        UI.drawPlayer()
+    end
+    
+    
+    if cpuUI then
+        UI.drawEnemy()
+    end
+    
+    
+    
 
     -- Switch to Main menu
     if gameState.phase == "main" then
@@ -208,11 +223,8 @@ function love.draw()
     if gameState.phase == "fight" then
         cursorY = 0
 
-        -- Load the moves for first monster in party      
-        list = {playerParty[playerLead].moveset.move1, playerParty[playerLead].moveset.move2, playerParty[playerLead].moveset.move3, playerParty[playerLead].moveset.move4}
-
         -- For each move in moveset of the current monster
-        for i, moves in ipairs(list) do
+        for i, moves in ipairs(playerList) do
             local buttonX = (winWidth) * 0.6
             local buttonWidth = (winWidth) * 0.4 - borderSize
             local buttonY = (winHeight) - (totalMenuHeight) + cursorY
@@ -230,14 +242,10 @@ function love.draw()
             local leftClick = love.mouse.isDown(1) 
             if leftClick and hot and gameState.timer >= 0.3 then
                 gameState.timer = 0
-
-                
+    
                 gameState.action = "attack"
                 gameState.playerInput = moves
                 gameState.phase = "dialogue"
-
-                gameState.timer = 0
-
             end
             
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
@@ -288,12 +296,11 @@ function love.draw()
         -- Change this to be a keypress later
         if gameState.timer >= 1.5 then
             gameState.phase = "playerRound"
+            gameState.timer = 0
         end
-        
     end
 
     if gameState.phase == "playerAction" then
-        cursoyY = 0
         Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
 
         if gameState.timer >= 1.5 then
@@ -304,12 +311,9 @@ function love.draw()
     end
 
     if gameState.phase == "cpuDialogue" then
-        cursoyY = 0
-        
-
         
         gameState.action = "attack"
-        Menu.loadDialogue(gameState, computerParty[computerLead].name, gameState.computerInput)
+        Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
         
         -- Change this to be a keypress later
         if gameState.timer >= 1.5 then
@@ -319,12 +323,47 @@ function love.draw()
     end
 
     if gameState.phase == "cpuAction" then
-        cursoyY = 0
-        Menu.loadDialogue(gameState, computerParty[computerLead].name, gameState.computerInput)
+        Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
 
         if gameState.timer >= 1.5 then
             gameState.phase = "main"
         end
     end
 
+    if gameState.phase == "FAINT" then
+        Menu.loadDialogue(gameState, Opponent, gameState.computerInput)
+        
+        if gameState.timer >= 1.5 then
+            gameState.timer = 0
+            cpuUI = false
+            gameState.phase = "switch" 
+        end
+    end
+
+    if gameState.phase == "switch" then
+        Menu.loadDialogue(gameState, Opponent, gameState.computerInput)
+        
+        
+        
+        if gameState.timer >= 1.5 then
+            cpuUI = true
+            cpuCombat = resetCombat(cpuCombat);
+            cpuLead = cpuLead + 1
+            
+            gameState.timer = 0
+            gameState.action = "cpuswitch"
+            gameState.phase = "cpuswitch"
+        end
+
+    end
+
+    if gameState.phase == "cpuswitch" then
+        Menu.loadDialogue(gameState, cpuParty[cpuLead], gameState.computerInput)
+        if gameState.timer >= 1.5 then
+            gameState.timer = 0
+            gameState.phase = "main"
+        end
+    end
+    
+    -- NOTES FOR TOMORROW - add logic for switching player, clean up game phase and action manip 
 end

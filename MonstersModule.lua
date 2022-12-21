@@ -33,8 +33,8 @@ MonstersIndex = {}
             "BIG CHUNGUS", 
             stats(
                 "ANIMAL",
-                180,
-                25,
+                20,
+                45,
                 30,
                 25), 
             moveset(
@@ -49,8 +49,8 @@ MonstersIndex = {}
             "LEBRON JAMES", 
             stats(
                 "HUMAN",
-                120,
-                10,
+                20,
+                45,
                 10,
                 10), 
             moveset(
@@ -66,7 +66,7 @@ MonstersIndex = {}
             stats(
                 "ANIMAL",
                 150,
-                35,
+                55,
                 35,
                 40), 
             moveset(
@@ -82,7 +82,7 @@ MonstersIndex = {}
             stats(
                 "MACHINE",
                 160,
-                20,
+                55,
                 10,
                 100), 
             moveset(
@@ -98,7 +98,7 @@ MonstersIndex = {}
             stats(
                 "MAGIC",
                 115,
-                50,
+                55,
                 10,
                 50), 
             moveset(
@@ -129,8 +129,8 @@ MonstersIndex = {}
             "IRON MAN",
             stats(
                 "MACHINE",
-                225,
                 20,
+                55,
                 40,
                 25), 
             moveset(
@@ -145,9 +145,9 @@ MonstersIndex = {}
             "PIE DUCK",
             stats(
                 "ANIMAL",
-                140,
-                25,
-                70,
+                20,
+                55,
+                15,
                 10), 
             moveset(
                 "NO TROUBLE", 
@@ -161,7 +161,7 @@ MonstersIndex = {}
             "KRATOS",
             stats(
                 "MAGIC",
-                150,
+                20,
                 65,
                 15,
                 20), 

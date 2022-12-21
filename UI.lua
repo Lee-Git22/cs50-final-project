@@ -36,13 +36,13 @@ UI = {}
         
         love.graphics.setColor(0.2, 0.2, 0.2)
         love.graphics.print(
-            string.format("%s", computerParty[computerLead].name), 
+            string.format("%s", cpuParty[cpuLead].name), 
             font, 
             borderSize, 
             borderSize
         )
         love.graphics.print(
-            string.format("HP %s/%s", computerStats.HP, computerParty[computerLead].stats.HP), --  Remember to change first arg to current HP
+            string.format("HP %s/%s", cpuStats.HP, cpuParty[cpuLead].stats.HP), --  Remember to change first arg to current HP
             font, 
             borderSize, 
             backgroundHeight * 0.10 + borderSize

@@ -6,7 +6,7 @@ playerCombat = {
     SPD = 1
 }
 
-computerCombat = {
+cpuCombat = {
     DMG = 0,
     ATK = 1,
     DEF = 1,
@@ -28,16 +28,17 @@ function getCounter(type1, type2)
     return 1.0
 end
 
-function resetCombat(DMG, ATK, DEF, SPD)
-    DMG = 0
-    ATK = 0
-    DEF = 0
-    SPD = 0
-    return 
+function resetCombat(table)
+    
+        table.DMG = 0
+        table.ATK = 1
+        table.DEF = 1
+        table.SPD = 1
+    return table
 end 
 
--- tmptmp will be a value passed to UI for displaying messages
 function calcBuff(gameState, entry, table)
+    math.randomseed(os.time())
     hit = math.random()
 
     if hit <= entry.parameters.hitRate then
@@ -55,14 +56,15 @@ function calcBuff(gameState, entry, table)
 end
 
 function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
+    math.randomseed(os.time())
     hit = math.random()
     hitValue = (entry.parameters.base + stat1.ATK) * entry.parameters.multiplier
     typeBonus = getCounter(entry.TYPE, stat2.TYPE)
     
-    if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
-        hitDamage = math.floor((hitValue * typeBonus) - stat2.DEF)
+    if hit <= entry.parameters.hitRate then -- For hits that land
+        hitDamage = math.floor((hitValue * typeBonus) - stat2.DEF) -- dmg calc
         
-        if typeBonus == 1.25 then
+        if typeBonus == 1.25 then 
             gameState.action = "SUPER EFFECTIVE!"
         end
 
@@ -76,14 +78,28 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
         else -- sets a minimum damage of 1
             comb2.DMG = comb2.DMG + 1
         end
+
+        if comb2.DMG >= Opponent.stats.HP then -- For killing blows
+            comb2.DMG = Opponent.stats.HP -- Set damage equal to max HP
+            
+            gameState.action = "FAINT"
+            print("reset combat")
+
+        end
+
         return gameState, entry, comb1, stat1, comb2, stat2
-        --TODO: Logic for HP hitting 0 
+
     else  -- Miss
         gameState.action = "MISS"
 
-        if entry.TYPE == "RISKY" then -- hits player back 12.5% hp 
-            comb1.DMG = comb1.DMG + math.floor(playerParty[playerLead].stats.HP * 0.125)
+        if entry.TYPE == "RISKY" then -- hits self for 12.5% hp 
+            comb1.DMG = comb1.DMG + math.floor(Self.stats.HP * 0.125)
             gameState.action = "RISKY"
+
+            if comb1.DMG >= Self.stats.HP then
+                comb1.DMG = Self.stats.HP 
+                gameState.action = "SELF FAINT" -- change later
+            end
         end
         return gameState, entry, comb1, stat1, comb2, stat2
         --print("MISSED") -- TODO: add a miss dialogue scene 
@@ -92,8 +108,16 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
 end
 
 function getCPUmove()
-    cpuMoves = {computerParty[computerLead].moveset.move1, computerParty[computerLead].moveset.move2, computerParty[computerLead].moveset.move3, computerParty[computerLead].moveset.move4}
+    cpuMoves = {
+        cpuParty[cpuLead].moveset.move1, 
+        cpuParty[cpuLead].moveset.move2, 
+        cpuParty[cpuLead].moveset.move3, 
+        cpuParty[cpuLead].moveset.move4
+    }
+    
+    math.randomseed(os.time())
     move = math.random(4)
+
     if move == 1 then
         return cpuMoves[1]
     elseif move == 2 then
@@ -104,26 +128,3 @@ function getCPUmove()
         return cpuMoves[4]
     end
 end
-    -- -- For attacks
-    -- hitValue = (entry.parameters.base + playerStats.ATK) * entry.parameters.multiplier
-    -- typeBonus = getCounter(entry.TYPE, computerStats.TYPE) -- will be 1 (default) or a 1.25x boost for effective and 0.8x for not effective
-    
-    
-    -- if hit <= entry.parameters.hitRate then -- hitRate is returns a %, if hit calls within that % then attack is performed
-    --     hitDamage = math.floor((hitValue * typeBonus) - computerStats.DEF)
-        
-    --     if hitDamage > 0 then
-    --         computerCombat.DMG = computerCombat.DMG + hitDamage
-    --     else -- sets a minimum damage of 1
-    --         computerCombat.DMG = computerCombat.DMG + 1
-    --     end
-        
-    --     --TODO: Logic for HP hitting 0 
-    -- else 
-    --     if entry.TYPE == "RISKY" then -- hits player back 12.5% hp 
-    --         playerCombat.DMG = playerCombat.DMG + math.floor(playerParty[playerLead].stats.HP * 0.125)
-    --         print("missed and hurt itself")
-    --     end
-        
-    --     --print("MISSED") -- TODO: add a miss dialogue scene
-    -- end
