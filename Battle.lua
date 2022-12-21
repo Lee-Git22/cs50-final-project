@@ -13,6 +13,39 @@ cpuCombat = {
     SPD = 1
 }
 
+function Heal(DMG, healValue)
+    DMG = DMG - healValue -- Reduce DMG based on healValue
+    recovered = healValue
+    if DMG < 0 then
+        recovered = healValue + DMG -- Determines actual amount if over healed
+        DMG = 0 -- Prevents overhealing
+    end
+    
+    gameState.message = "HEAL"
+    return DMG
+end
+
+function Recruit(value) -- Adds number amount of monsters into party
+    addedNames = {}
+    for i = 1,value,1
+    do
+        local tmp = math.random(1,9)
+        table.insert(playerParty, MonstersIndex[tmp])
+        table.insert(addedNames, MonstersIndex[tmp].name) 
+    end
+    gameState.message = "RECRUIT"
+end
+
+function Tradeoff(stat1, stat2, value1, value2)
+    stat1 = stat1 - value1
+    stat2 = stat2 + value2
+
+    negtrade = value1 
+    postrade = value2
+    gameState.message = "TRADEOFF"
+    return stat1, stat2
+end
+
 
 function getCounter(type1, type2)
     if type1 == "HUMAN" and type2 == "ANIMAL" then

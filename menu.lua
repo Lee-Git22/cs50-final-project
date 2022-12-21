@@ -89,11 +89,44 @@ Menu = {}
             )
         end
 
-        if gameState.message == "consumable" then
+        if gameState.message == "item" then
             -- Draws consumable text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
                 string.format("PLAYER used %s!",input),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
+        if gameState.message == "HEAL" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("%s recovered %s HP!", playerParty[playerLead].name, recovered),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
+        if gameState.message == "RECRUIT" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("%s JOINED PLAYER PARTY!", addedNames[1]),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
+        if gameState.message == "TRADEOFF" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("%s\nLOST %s DEF AND GAINED %s ATK", playerParty[playerLead].name, negtrade, postrade ),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize

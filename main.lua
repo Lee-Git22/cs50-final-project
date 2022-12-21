@@ -7,12 +7,15 @@ Battle = require("Battle")
 
 -- Global menu tables to hold buttons
 mainButtons = {}
-Inventory = {}
 
 MonstersIndex = {}
 playerParty = {}
 cpuParty = {}
 AttackDataBase = {}
+ItemDatabase = {}
+
+Inventory = {}
+
 
 -- Global values used for respective game state
 gameState = {
@@ -27,12 +30,13 @@ gameState = {
 function love.load()  
     math.randomseed(os.time()) -- Randoms the seed everytime on launch
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
-    ItemsModule.load() -- Loads in items into Inventory table
+    ItemsModule.loadInventory(Inventory) -- Loads in items into Inventory table
     AttackModule.load() -- Loads in database into Database table
+    ItemsModule.load()
 
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("Fight", function() gameState.phase = "fight" end))
-    table.insert(mainButtons, Menu.newButton("Switch", function() cpuCombat = resetCombat(cpuCombat); cpuLead = cpuLead + 1 end)) -- Add this feature later
+    table.insert(mainButtons, Menu.newButton("Switch", function() playerCombat = resetCombat(playerCombat); playerLead = playerLead + 1 end)) -- Add this feature later
     table.insert(mainButtons, Menu.newButton("Item", function() gameState.phase = "item" end))
     table.insert(mainButtons, Menu.newButton("Run", function() love.event.quit(0) end)) 
     
@@ -118,6 +122,29 @@ function love.update(dt)
         end
     end
 
+    if gameState.phase == "itemRound" then
+        -- Change targets for battle message display
+        Self = playerParty[playerLead]
+        Opponent = cpuParty[cpuLead]
+
+        for i, entry in pairs(ItemDatabase) do
+            if gameState.playerInput == entry.name then
+                
+                if entry.TYPE == "HEAL" then -- Heals monster and updates gamestate message to HEAL
+                    playerCombat.DMG = Heal(playerCombat.DMG, entry.value)
+                elseif entry.TYPE == "RECRUIT" then -- Adds a number of monsters to party
+                    Recruit(entry.value)
+                
+                elseif entry.TYPE == "TRADEOFF" then 
+                    playerCombat.DEF, playerCombat.ATK = Tradeoff(playerCombat.DEF, playerCombat.ATK, (playerParty[playerLead].stats.DEF * 0.5), entry.value)
+                end
+
+                gameState.phase = "playerAction"
+                gameState.timer = 0
+            end 
+        end
+    end
+
     if gameState.phase == "cpuRound" and gameState.turn == "cpu" then
 
         Self = cpuParty[cpuLead]
@@ -152,9 +179,8 @@ function love.update(dt)
             end
         end       
     end
-    -- end
-    print(turn)
-    print(gameState.turn)
+
+    --print(string.format("gamestate.phase: %s\ngamestate.turn: %s\ngamestate.message: %s", gameState.phase, gameState.turn, gameState.message))
 end
 
 function love.draw()
@@ -230,16 +256,17 @@ function love.draw()
                 gameState.timer = 0
     
                 gameState.message = "attack"
-                gameState.playerInput = moves
-
+                gameState.playerInput = moves -- Get players move
+                gameState.computerInput = getCPUmove() -- Get computers move
                 turn = 1
+
                 -- Determines who turn 1 goes to 
                 if playerStats.SPD >= cpuStats.SPD then
                     gameState.turn = "player"
                     gameState.phase = "dialogue"
                  else
                     gameState.turn = "cpu"
-                    gameState.computerInput = getCPUmove() -- Get computers move
+                    
                     gameState.phase = "cpuDialogue"
                  end
 
@@ -254,7 +281,7 @@ function love.draw()
     if gameState.phase == "item" then
         cursorY = 0
         
-        -- Load the fight menu
+        -- Load the item menu
         for i, items in ipairs(Inventory) do  
             
             local buttonX = (winWidth * 0.6) 
@@ -273,35 +300,50 @@ function love.draw()
             if leftClick and hot and gameState.timer > 0.3 then
                 gameState.timer = 0
 
-                gameState.message = "consumable"
+                gameState.message = "item"
                 gameState.playerInput = items.name
+                
+                gameState.computerInput = getCPUmove() -- Get computers move
+
+                turn = 1
+                -- When using item, player always goes first
+                gameState.turn = "player"
                 gameState.phase = "dialogue"
+                items.uses = items.uses - 1 
+
 
                 gameState.timer = 0
 
             end
 
             Menu.loadButton(buttonColor, string.format("%s x %s", items.name, items.uses), buttonX, buttonY, buttonWidth)
-
+            
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
         end
     end
 
     if gameState.phase == "dialogue" then
         cursoyY = 0
+
+        -- Displays Monster use X OR PLAYER used Y based on gameState.message
         Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
         
         -- Change this to be a keypress later
         if gameState.timer >= 1.5 then
-            gameState.phase = "playerRound"
+            if gameState.message == "attack" then
+                gameState.phase = "playerRound"
+            else -- message would be "item"
+                gameState.phase = "itemRound"
+            end
             gameState.timer = 0
+
         end
     end
 
     if gameState.phase == "playerAction" then
         Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
 
-        if gameState.timer >= 1.5 then
+        if gameState.timer >= 2 then
             
             -- if turn 1 just finished then go to turn 2, otherwise reset
             if turn == 1 then
@@ -415,5 +457,6 @@ function love.draw()
             gameState.timer = 0
         end
     end
-    -- NOTES FOR TOMORROW - add logic for switching player, clean up game phase and action manip 
+
+    -- NOTES FOR TOMORROW - add logic for items, add animations - right now game flow is correct but items have no functions and uses dont decrease
 end
