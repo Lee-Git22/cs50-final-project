@@ -78,6 +78,17 @@ Menu = {}
             )
         end
 
+        if gameState.message == "cpuAttack" then
+            -- Draws action text
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("Enemy %s\nused %s!", monsterName, input),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
         if gameState.message == "consumable" then
             -- Draws consumable text
             love.graphics.setColor(0.2, 0.2, 0.2)
@@ -90,11 +101,11 @@ Menu = {}
         end
 
         if gameState.message == "SUPER EFFECTIVE!" 
-        or gameState.message == "NOT VERY EFFECTIVE..." then
+        or gameState.message == "not very effective..." then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("IT IS %s", gameState.message),
+                string.format("it is %s", gameState.message),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -105,7 +116,7 @@ Menu = {}
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s IS RAMPING UP", monsterName),
+                string.format("%s IS RAMPING UP!", Self.name),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -115,7 +126,7 @@ Menu = {}
         if gameState.message == "DEBUFF" then
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s IS SHOOK!", monsterName),
+                string.format("%s IS SHOOK!", Opponent.name),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -126,7 +137,7 @@ Menu = {}
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s MISSED", monsterName),
+                string.format("%s MISSED!", Self.name),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -137,7 +148,7 @@ Menu = {}
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s MISSED AND HURT ITSELF", monsterName),
+                string.format("%s missed and hurt itself...", Self.name),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize

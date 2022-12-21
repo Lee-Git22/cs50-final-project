@@ -17,6 +17,7 @@ AttackDataBase = {}
 -- Global values used for respective game state
 gameState = {
     phase = "main",
+    turn = "",
     message = "",
     playerInput = "", -- the move player chooses for the round
     computerInput = "", -- computers move for the round 
@@ -59,8 +60,6 @@ end
 function love.update(dt)
     gameState.timer = gameState.timer + dt -- Used for menu display and to stop accidental double clicks
 
-
-    
     -- Stats used for battle calculations for the current monsters in battle
     playerStats = {
         TYPE = playerParty[playerLead].stats.TYPE,
@@ -85,17 +84,9 @@ function love.update(dt)
         playerParty[playerLead].moveset.move3, 
         playerParty[playerLead].moveset.move4
     }
-    -- if playerStats.SPD >= computerStats.SPD then
-    --     local move1 = "player"
-    --     local move2 = "computer"
-    -- else
-    --     local move1 = "computer"
-    --     local move2 = "player"
-    -- end
-
     
     -- For player round
-    if gameState.phase == "playerRound" then
+    if gameState.phase == "playerRound" and gameState.turn == "player" then
 
         -- Change targets for battle message display
         Self = playerParty[playerLead]
@@ -127,7 +118,7 @@ function love.update(dt)
         end
     end
 
-    if gameState.phase == "cpuRound" then
+    if gameState.phase == "cpuRound" and gameState.turn == "cpu" then
 
         Self = cpuParty[cpuLead]
         Opponent = playerParty[playerLead]
@@ -153,13 +144,17 @@ function love.update(dt)
                     
                 else
                     gameState.timer = 0
-                    gameState.phase = "cpuAction"  
+                    gameState.phase = "cpuAction"
+                    gameState.turn = "player"  
                 end
+
 
             end
         end       
     end
     -- end
+    print(turn)
+    print(gameState.turn)
 end
 
 function love.draw()
@@ -167,21 +162,14 @@ function love.draw()
     -- Represents current button y position
     local cursorY = 0
 
-
     UI.drawBackground()
-
     if playerUI then 
         UI.drawPlayer()
     end
-    
-    
     if cpuUI then
         UI.drawEnemy()
     end
     
-    
-    
-
     -- Switch to Main menu
     if gameState.phase == "main" then
         cursorY = 0 -- Resets cursor
@@ -244,7 +232,18 @@ function love.draw()
                 gameState.message = "attack"
                 gameState.playerInput = moves
 
-                gameState.phase = "dialogue"
+                turn = 1
+                -- Determines who turn 1 goes to 
+                if playerStats.SPD >= cpuStats.SPD then
+                    gameState.turn = "player"
+                    gameState.phase = "dialogue"
+                 else
+                    gameState.turn = "cpu"
+                    gameState.computerInput = getCPUmove() -- Get computers move
+                    gameState.phase = "cpuDialogue"
+                 end
+
+                
             end
             
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
@@ -300,27 +299,30 @@ function love.draw()
     end
 
     if gameState.phase == "playerAction" then
-        --print(string.format("debug: %s %s %s",gameState, playerParty[playerLead].name, gameState.playerInput ))
         Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
 
         if gameState.timer >= 1.5 then
             
-            gameState.phase = "cpuDialogue" 
-            gameState.computerInput = getCPUmove() -- Get computers move
+            -- if turn 1 just finished then go to turn 2, otherwise reset
+            if turn == 1 then
+                gameState.phase = "cpuDialogue"
+                gameState.turn = "cpu"
+                turn = 2 
+            else 
+                gameState.phase = "main"
+            end
             gameState.timer = 0
         end
     end
 
     if gameState.phase == "cpuDialogue" then
-        
-        
-
-        gameState.message = "attack"
+        -- Displays CPU monster used X 
+        gameState.message = "cpuAttack"
         Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
         
         -- Change this to be a keypress later
         if gameState.timer >= 1.5 then
-            gameState.phase = "cpuRound"
+            gameState.phase = "cpuRound" -- in love.update
             gameState.timer = 0
         end
         
@@ -330,8 +332,17 @@ function love.draw()
         Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
 
         if gameState.timer >= 1.5 then
-            gameState.phase = "main"
-            gameState.timer = 0
+
+            if turn == 1 then 
+                turn = 2
+                gameState.phase = "dialogue"
+                gameState.message = "attack"
+                gameState.turn = "player"
+                gameState.timer = 0
+            else
+                gameState.phase = "main"
+                gameState.timer = 0
+            end
         end
     end
 
