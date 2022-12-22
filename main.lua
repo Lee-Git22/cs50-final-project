@@ -124,11 +124,10 @@ function love.update(dt)
 
         for i, entry in pairs(ItemDatabase) do
             if gameState.playerInput == entry.name then
-                
-
-                
+            
                 if entry.TYPE == "HEAL" then -- Heals monster and updates gamestate message to HEAL
                     playerCombat.DMG = Heal(playerCombat.DMG, entry.value)
+
                 elseif entry.TYPE == "RECRUIT" then -- Adds a number of monsters to party
                     Recruit(entry.value)
                 
@@ -139,14 +138,14 @@ function love.update(dt)
                         itemBonus.SPD, itemBonus.DEF = Tradeoff(itemBonus.SPD, itemBonus.DEF, (playerParty[playerLead].stats.SPD * 0.5), entry.value)
                     elseif entry.name == "SPD BERRY" then
                         itemBonus.ATK, itemBonus.SPD = Tradeoff(itemBonus.SPD, itemBonus.SPD, (playerParty[playerLead].stats.ATK * 0.5), entry.value)
-                    end
-                    
+                    end  
                     
                 end
-
+                playSFX = true
                 gameState.phase = "playerAction"
                 gameState.timer = 0
-                playSFX = true
+                
+
             end 
         end
         
@@ -564,7 +563,7 @@ function love.draw()
     if gameState.phase == "WIN" then
         Menu.loadDialogue(gameState)
 
-        if gameState.timer >= 1.5 then
+        if gameState.timer >= 1.0 then
             cpuUI = false
             playerUI = false
     
@@ -575,7 +574,7 @@ function love.draw()
     if gameState.phase == "LOSE" then
         Menu.loadDialogue(gameState)
  
-        if gameState.timer >= 1.5 then
+        if gameState.timer >= 1.0 then
             cpuUI = false
             playerUI = false
     

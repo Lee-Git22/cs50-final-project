@@ -164,7 +164,7 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
         end
 
         if typeBonus == 0.8 then
-            gameState.message = "NOT VERY EFFECTIVE..."
+            gameState.message = "not very effective..."
         end
 
         if hitDamage > 0 then
