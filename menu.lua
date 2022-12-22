@@ -67,6 +67,17 @@ Menu = {}
             textboxHeight
         )
 
+        if gameState.message == "start" then
+            -- Draws action text
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("Straw Hat PETER wants to battle!\n\nCLICK TO START", monsterName, input),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+
         if gameState.message == "attack" then
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)

@@ -1,10 +1,11 @@
-function monster(name, stats, moveset, sprite1, sprite2)
+function monster(name, stats, moveset, sprite1, sprite2, cry)
     return {
         name = name,
         stats = stats,
         moveset = moveset,
         sprite1 = sprite1,
-        sprite2 = sprite2
+        sprite2 = sprite2,
+        cry = cry
     }
 end
 
@@ -45,7 +46,8 @@ MonstersIndex = {}
                 "CHEAP SHOT",
                 "TURKEY SLAM"),
                 love.graphics.newImage("sprites/brewmonkeyback.png"),
-                love.graphics.newImage("sprites/brewmonkeyfront.png")
+                love.graphics.newImage("sprites/brewmonkeyfront.png"),
+                love.audio.newSource("audio/monstercry/brewmonkeycry.wav", "static")
         ))
 
         chungus = table.insert(MonstersIndex, 
@@ -63,7 +65,8 @@ MonstersIndex = {}
                 "CURSE",
                 "SLAP"),
                 love.graphics.newImage("sprites/chungusback.png"),
-                love.graphics.newImage("sprites/chungusfront.png")
+                love.graphics.newImage("sprites/chungusfront.png"),
+                love.audio.newSource("audio/monstercry/chunguscry.wav", "static")
         ))
 
         lebron = table.insert(MonstersIndex, 
@@ -81,7 +84,8 @@ MonstersIndex = {}
                 "GOAT MODE",
                 "HARD D"),
                 love.graphics.newImage("sprites/lebronback.png"),
-                love.graphics.newImage("sprites/lebronfront.png")
+                love.graphics.newImage("sprites/lebronfront.png"),
+                love.audio.newSource("audio/monstercry/lebroncry.wav", "static")
         ))
 
         gpt3 = table.insert(MonstersIndex, 
@@ -99,7 +103,8 @@ MonstersIndex = {}
                 "LASER",
                 "COPYPASTA"),
                 love.graphics.newImage("sprites/gpt3back.png"),
-                love.graphics.newImage("sprites/gpt3front.png")
+                love.graphics.newImage("sprites/gpt3front.png"),
+                love.audio.newSource("audio/monstercry/gpt3cry.wav", "static")
         ))
 
         pikachu = table.insert(MonstersIndex,
@@ -117,7 +122,8 @@ MonstersIndex = {}
                 "SLAP",
                 "THUNDER BOLT"),
                 love.graphics.newImage("sprites/pikachuback.png"),
-                love.graphics.newImage("sprites/pikachufront.png")
+                love.graphics.newImage("sprites/pikachufront.png"),
+                love.audio.newSource("audio/monstercry/pikachucry.wav", "static")
         ))
 
         jackiechan = table.insert(MonstersIndex,
@@ -135,7 +141,8 @@ MonstersIndex = {}
                 "NO TROUBLE",
                 "SPACE JAM DUNK"),
                 love.graphics.newImage("sprites/jackieback.png"),
-                love.graphics.newImage("sprites/jackiefront.png")
+                love.graphics.newImage("sprites/jackiefront.png"),
+                love.audio.newSource("audio/monstercry/jackiecry.wav", "static")
         ))
 
         ironman = table.insert(MonstersIndex,
@@ -153,7 +160,8 @@ MonstersIndex = {}
                 "LASER",
                 "BIG ONE"),
                 love.graphics.newImage("sprites/ironmanback.png"),
-                love.graphics.newImage("sprites/ironmanfront.png")
+                love.graphics.newImage("sprites/ironmanfront.png"),
+                love.audio.newSource("audio/monstercry/ironmancry.wav", "static")
         ))
 
         pieduck = table.insert(MonstersIndex,
@@ -171,7 +179,8 @@ MonstersIndex = {}
                 "PIECIC",
                 "DEEP LEARN"),
                 love.graphics.newImage("sprites/pieduckback.png"),
-                love.graphics.newImage("sprites/pieduckfront.png")
+                love.graphics.newImage("sprites/pieduckfront.png"),
+                love.audio.newSource("audio/monstercry/pieduckcry.wav", "static")
         ))
 
         kratos = table.insert(MonstersIndex,
@@ -189,7 +198,8 @@ MonstersIndex = {}
                 "SPARTAN RAGE",
                 "SLAP"),
                 love.graphics.newImage("sprites/kratosback.png"),
-                love.graphics.newImage("sprites/kratosfront.png")
+                love.graphics.newImage("sprites/kratosfront.png"),
+                love.audio.newSource("audio/monstercry/kratoscry.wav", "static")
         ))
         
     end

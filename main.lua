@@ -17,7 +17,7 @@ ItemDatabase = {}
 
 -- Global values used for respective game state
 gameState = {
-    phase = "main",
+    phase = "start",
     turn = "",
     message = "",
     playerInput = "", -- the move player chooses for the round
@@ -27,11 +27,7 @@ gameState = {
 
 function love.load()
 
-   
-    
-
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
-    
     AttackModule.load() -- Loads in database into Database table
     ItemsModule.load()
 
@@ -39,9 +35,7 @@ function love.load()
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("FIGHT", function() gameState.phase = "fight" end))
     table.insert(mainButtons, Menu.newButton("ITEM", function() gameState.phase = "item" end))
-    table.insert(mainButtons, Menu.newButton("PARTY", function() cpuCombat = resetCombat(cpuCombat)
-        cpuLead = cpuLead + 1; playerCombat = resetCombat(playerCombat)
-        playerLead = playerLead + 1 end)) 
+    table.insert(mainButtons, Menu.newButton("PARTY", function() playSFX = true end)) 
     table.insert(mainButtons, Menu.newButton("QUIT", function() love.event.quit(0) end)) 
     
     
@@ -52,17 +46,19 @@ function love.load()
     playerLead = 1 
     cpuLead = 1
 
-    playerUI = true
-    cpuUI = true
+    playerUI = false
+    cpuUI = false
 
     
 end
 
 function love.update(dt)
-    
+    math.randomseed(love.mouse.getPosition()) -- for better RNG
     BGM()
+    SFX(gameState)
 
     gameState.timer = gameState.timer + dt -- Used for menu display and to stop accidental double clicks
+
     -- Stats used for battle calculations for the current monsters in battle
     playerStats = {
         TYPE = playerParty[playerLead].stats.TYPE,
@@ -103,19 +99,19 @@ function love.update(dt)
                 
                 elseif entry.TYPE == "DEBUFF" then
                     gameState, cpuCombat = calcBuff(gameState, entry, cpuCombat)
+
                 else -- For attacks
                     gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats = 
                     calcAttack(gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats)
                 end
                 
                 if gameState.message == "FAINT" then
-                    gameState.timer = 0
                     gameState.phase = "FAINT"
                 else
-                    gameState.timer = 0
                     gameState.phase = "playerAction"
                 end
-                -- Reset timer for next message
+                gameState.timer = 0
+                playSFX = true
                 
             end
         end
@@ -150,6 +146,7 @@ function love.update(dt)
 
                 gameState.phase = "playerAction"
                 gameState.timer = 0
+                playSFX = true
             end 
         end
         
@@ -176,24 +173,21 @@ function love.update(dt)
                 end
 
                 if gameState.message == "FAINT" then
-                    gameState.timer = 0
                     gameState.phase = "FAINT"
-                    
                 else
-                    gameState.timer = 0
                     gameState.phase = "cpuAction"
                     gameState.turn = "player"  
                 end
 
+                gameState.timer = 0
+                playSFX = true
 
             end
         end       
     end
-    -- print(playerStats.SPD)
-    -- print(string.format("cpu speed: %s", cpuStats.SPD))
-    -- print(gameState.turn)
-    math.randomseed(love.mouse.getPosition())
-    --print(string.format("gamestate.phase: %s\ngamestate.turn: %s\ngamestate.message: %s", gameState.phase, gameState.turn, gameState.message))
+
+    
+    
 end
 
 function love.draw()
@@ -203,6 +197,12 @@ function love.draw()
 
     UI.drawBackground()
     
+    if startingGameUI then
+        love.graphics.setColor(0.5,0.5,0.5)
+        love.graphics.draw(playerSprite, borderSize, 8, 0, 4)
+        love.graphics.draw(cpuSprite, winWidth-borderSize-320,borderSize+40,0,2.2)
+    end
+
     if playerUI then 
         UI.drawPlayer()
     end
@@ -210,6 +210,26 @@ function love.draw()
         UI.drawEnemy()
     end
     
+    if gameState.phase == "start" then
+        startingGameUI = true
+
+        local leftClick = love.mouse.isDown(1)
+        gameState.message = "start"
+        Menu.loadDialogue(gameState) -- Straw Hat PETER wants to Battle
+        
+        if gameState.timer >= 10 or leftClick then -- After 10 seconds or leftclick, send out cpu monster
+            
+            startingGame = true
+            gameState.message = "cpuswitch"
+            gameState.phase = "cpuSelect"
+            gameState.timer = 0
+
+            
+            
+        end
+
+    end
+
     -- Switch to Main menu
     if gameState.phase == "main" then
         cursorY = 0 -- Resets cursor
@@ -437,6 +457,7 @@ function love.draw()
     if gameState.phase == "FAINT" then       
         Menu.loadDialogue(gameState, Opponent.name) -- Displays X monster FAINTED 
         
+    
         if gameState.timer >= 1.5 then
             
             -- Determine which side fainted
@@ -458,26 +479,33 @@ function love.draw()
     if gameState.phase == "cpuSelect" then
         -- keeps X is FAINTED on the screen
         --Menu.loadDialogue(gameState, Opponent)
-        
-        if gameState.timer >= 1 then
-            
-            cpuCombat = resetCombat(cpuCombat) -- resets combat stats for next monster
-            cpuLead = cpuLead + 1 -- shift party up by 1
 
+        startingGameUI = false -- hide trainer sprites
+
+        if gameState.timer >= 0.5 then -- after 0.5
+            if startingGame then -- send out first pokemon
+                
+                cpuLead = 1
+                gameState.message = "cpuswitch"
+                gameState.phase = "cpuswitch"
+            else
+                cpuCombat = resetCombat(cpuCombat) -- resets combat stats for next monster
+                cpuLead = cpuLead + 1 -- shift party up by 1    
+            end
+           
             if cpuLead > cpuPartySize then
                 cpuLead = 1
                 gameState.message = "WIN"
                 gameState.phase = "WIN"
-                gameState.timer = 0
+                
             else
-                cpuUI = true 
-            
+                cpuUI = true
+                playSFX = true
                 gameState.message = "cpuswitch"
                 gameState.phase = "cpuswitch"
-                gameState.timer = 0
             end
 
-
+            gameState.timer = 0
         end
 
     end
@@ -485,29 +513,41 @@ function love.draw()
     if gameState.phase == "cpuswitch" then
         --displays CPU sends out X 
         Menu.loadDialogue(gameState, cpuParty[cpuLead].name)
-        if gameState.timer >= 1.5 then
-            gameState.phase = "main"
+
+        if gameState.timer >= 1.5 then 
+            if startingGame then -- pass to player's first monster
+                gameState.phase = "playerSelect"
+            else -- just return to main
+                gameState.phase = "main"
+            end
             gameState.timer = 0
         end
+        
+       
     end
     
     if gameState.phase == "playerSelect" then
         if gameState.timer >= 0.5 then
-            playerCombat = resetCombat(playerCombat)
-            playerLead = playerLead + 1
 
+            if startingGame then -- send out first pokemon
+                playerLead = 1
+            else
+                playerCombat = resetCombat(playerCombat)
+                playerLead = playerLead + 1
+            end
+            
             if playerLead > playerPartySize then
                 playerLead = 1
                 gameState.message = "LOSE"
                 gameState.phase = "LOSE"
-                gameState.timer = 0
             else
                 playerUI = true
-
+                playSFX = true
                 gameState.message = "playerswitch"
                 gameState.phase = "playerswitch"
-                gameState.timer = 0
             end
+
+            gameState.timer = 0
         end
     end
 
@@ -515,6 +555,7 @@ function love.draw()
         --displays CPU sends out X 
         Menu.loadDialogue(gameState, playerParty[playerLead].name)
         if gameState.timer >= 1.5 then
+            startingGame = false -- starting game finished
             gameState.phase = "main"
             gameState.timer = 0
         end
@@ -523,18 +564,24 @@ function love.draw()
     if gameState.phase == "WIN" then
         Menu.loadDialogue(gameState)
 
-        if gameState.timer >= 10000 then
-            
+        if gameState.timer >= 1.5 then
+            cpuUI = false
+            playerUI = false
+    
+            startingGameUI = true
         end
     end
 
     if gameState.phase == "LOSE" then
         Menu.loadDialogue(gameState)
-
-        if gameState.timer >= 10000 then
-            
+ 
+        if gameState.timer >= 1.5 then
+            cpuUI = false
+            playerUI = false
+    
+            startingGameUI = true
         end
     end
     
-    -- NOTES FOR TOMORROW - add logic for items, add animations - right now game flow is correct but items have no functions and uses dont decrease
+   
 end
