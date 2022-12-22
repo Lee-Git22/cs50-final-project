@@ -28,6 +28,22 @@ end
 MonstersIndex = {}
     function MonstersIndex.load()
 
+        brewmonkey = table.insert(MonstersIndex, 
+        monster(
+            "BREW MONKEY", 
+            stats(
+                "ANIMAL",
+                120,
+                70,
+                35,
+                60), 
+            moveset(
+                "SURF", 
+                "CHUG CHUG", 
+                "CHEAP SHOT",
+                "TURKEY SLAM")
+        ))
+
         chungus = table.insert(MonstersIndex, 
         monster(
             "BIG CHUNGUS", 
@@ -58,22 +74,6 @@ MonstersIndex = {}
                 "SPACE JAM DUNK", 
                 "GOAT MODE",
                 "HARD D")
-        ))
-
-        brewmonkey = table.insert(MonstersIndex, 
-        monster(
-            "BREW MONKEY", 
-            stats(
-                "ANIMAL",
-                120,
-                70,
-                35,
-                60), 
-            moveset(
-                "SURF", 
-                "CHUG CHUG", 
-                "CHEAP SHOT",
-                "TURKEY SLAM")
         ))
 
         gpt3 = table.insert(MonstersIndex, 

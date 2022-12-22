@@ -5,7 +5,7 @@ UI = {}
 
     function UI.drawBackground()
         -- Draws in background
-        love.graphics.setColor(0.3, 0.3, 0.3)
+        love.graphics.setColor(0.8, 0.8, 0.8)
         love.graphics.rectangle("fill", borderSize, borderSize, backgroundWidth, backgroundHeight)
     end
     
@@ -27,10 +27,15 @@ UI = {}
             winWidth * 0.65 - borderSize, 
             (backgroundHeight) * 0.90 + borderSize
         )
+
+        
         -- TODO: Load a sprite for playerParty[playerLead]
+        love.graphics.setColor(0.5,0.5,0.5)
+        love.graphics.draw(test2, borderSize, 8, 0, 4)
     end
 
     function UI.drawEnemy()
+        
         love.graphics.setColor(1, 1, 1)
         love.graphics.rectangle("fill", borderSize, borderSize, winWidth * 0.35, backgroundHeight * 0.20)
         
@@ -47,7 +52,12 @@ UI = {}
             borderSize, 
             backgroundHeight * 0.10 + borderSize
         )
+
+        love.graphics.setColor(0.5,0.5,0.5)
+        love.graphics.draw(test, winWidth-borderSize-320,borderSize+40,0,2.2)
+
         -- TODO: Load a sprite for computerParty[computerLead]
+        
     end
 
 

@@ -25,7 +25,8 @@ gameState = {
 }
 
 function love.load()
-    test = love.graphics.newImage("canvas.png")  
+    test = love.graphics.newImage("brewmonkeyfront.png")
+    test2 = love.graphics.newImage("brewmonkeyback.png")  
 
     math.randomseed(os.time()) -- Randoms the seed everytime on launch
 
@@ -47,14 +48,14 @@ function love.load()
     for i = 1,playerPartySize,1
     do
         local tmp = math.random(1,9)
-        table.insert(playerParty, MonstersIndex[tmp]) 
+        table.insert(playerParty, MonstersIndex[i]) 
     end
 
     cpuPartySize = 5
     for i = 1,cpuPartySize,1
     do
         local tmp = math.random(1,9)
-        table.insert(cpuParty, MonstersIndex[tmp])
+        table.insert(cpuParty, MonstersIndex[i])
     end
 
     -- Sets first monster in party as party leader (default parameter)
@@ -69,14 +70,13 @@ end
 
 function love.update(dt)
     gameState.timer = gameState.timer + dt -- Used for menu display and to stop accidental double clicks
-
     -- Stats used for battle calculations for the current monsters in battle
     playerStats = {
         TYPE = playerParty[playerLead].stats.TYPE,
         HP = playerParty[playerLead].stats.HP - playerCombat.DMG,
-        ATK = playerParty[playerLead].stats.ATK * playerCombat.ATK,
-        DEF = playerParty[playerLead].stats.DEF * playerCombat.DEF,
-        SPD = playerParty[playerLead].stats.SPD * playerCombat.SPD,
+        ATK = playerParty[playerLead].stats.ATK * playerCombat.ATK + itemBonus.ATK,
+        DEF = playerParty[playerLead].stats.DEF * playerCombat.DEF + itemBonus.DEF,
+        SPD = playerParty[playerLead].stats.SPD * playerCombat.SPD + itemBonus.SPD,
     }
 
     cpuStats = {
@@ -145,16 +145,12 @@ function love.update(dt)
                 
                 elseif entry.TYPE == "TRADEOFF" then
                     if entry.name == "ATK BERRY" then
-                        playerStats.DEF, playerStats.ATK = Tradeoff(playerStats.DEF, playerStats.ATK, (playerParty[playerLead].stats.DEF * 0.5), entry.value)
+                        itemBonus.DEF, itemBonus.ATK = Tradeoff(itemBonus.DEF, itemBonus.ATK, (playerParty[playerLead].stats.DEF * 0.5), entry.value)
                     elseif entry.name == "DEF BERRY" then
-                        playerStats.SPD, playerStats.DEF = Tradeoff(playerStats.SPD, playerStats.DEF, (playerParty[playerLead].stats.SPD * 0.5), entry.value)
+                        print("def berry used")
+                        itemBonus.SPD, itemBonus.DEF = Tradeoff(itemBonus.SPD, itemBonus.DEF, (playerParty[playerLead].stats.SPD * 0.5), entry.value)
                     elseif entry.name == "SPD BERRY" then
-                        playerStats.ATK, playerStats.SPD = Tradeoff(playerStats.SPD, playerStats.SPD, (playerParty[playerLead].stats.ATK * 0.5), entry.value)
-                    -- elseif entry.name == "DEVIL FRUIT" then
-                    --     local tmp = 0
-                    --     tmp, playerStats.ATK = Tradeoff(tmp, playerStats.ATK, 0, entry.value)
-                    --     tmp, playerStats.DEF = Tradeoff(tmp, playerStats.DEF, 0, entry.value)
-                    --     tmp, playerStats.SPD = Tradeoff(tmp, playerStats.SPD, 0, entry.value)
+                        itemBonus.ATK, itemBonus.SPD = Tradeoff(itemBonus.SPD, itemBonus.SPD, (playerParty[playerLead].stats.ATK * 0.5), entry.value)
                     end
                     
                     
@@ -201,6 +197,9 @@ function love.update(dt)
             end
         end       
     end
+    -- print(playerStats.SPD)
+    -- print(string.format("cpu speed: %s", cpuStats.SPD))
+    -- print(gameState.turn)
     math.randomseed(love.mouse.getPosition())
     --print(string.format("gamestate.phase: %s\ngamestate.turn: %s\ngamestate.message: %s", gameState.phase, gameState.turn, gameState.message))
 end
@@ -211,12 +210,12 @@ function love.draw()
     local cursorY = 0
 
     UI.drawBackground()
+    
     if playerUI then 
         UI.drawPlayer()
     end
     if cpuUI then
         UI.drawEnemy()
-        --love.graphics.draw(test, 0,0)
     end
     
     -- Switch to Main menu
@@ -290,7 +289,6 @@ function love.draw()
                     gameState.phase = "dialogue"
                  else
                     gameState.turn = "cpu"
-                    
                     gameState.phase = "cpuDialogue"
                  end
 

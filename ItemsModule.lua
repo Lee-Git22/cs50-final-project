@@ -40,17 +40,14 @@ ItemDatabase = {}
             "HEAL",
             10000
         ))
-
-        
-        devilfruit = table.insert(ItemDatabase, 
+       
+        atkberry = table.insert(ItemDatabase, 
         newItem(
-            "DEVIL FRUIT",
+            "ATK BERRY",
             "TRADEOFF",
             20
         ))
 
-
-        
         sodiepop = table.insert(ItemDatabase, 
         newItem(
             "SODIE POP",
@@ -65,12 +62,7 @@ ItemDatabase = {}
             20
         ))
 
-        atkberry = table.insert(ItemDatabase, 
-        newItem(
-            "ATK BERRY",
-            "TRADEOFF",
-            20
-        ))
+
 
         defberry = table.insert(ItemDatabase, 
         newItem(

@@ -13,19 +13,21 @@ cpuCombat = {
     SPD = 1
 }
 
+itemBonus = {
+    ATK = 0,
+    DEF = 0,
+    SPD = 0
+}
+
+
 -- Initialize player inventory 
 Inventory = {}
 function loadInventory(Inventory)
-    local pool2a = math.random(4,7)
-    local pool2b = math.random(4,7)
-
     -- Player gets 2 random powerful pool1 items and random amounts of pool2 items
     item1 = table.insert(Inventory, addItem(ItemDatabase[math.random(1,2)].name, 1)) -- powerful items
-    item2 = table.insert(Inventory, addItem(ItemDatabase[math.random(3,4)].name, 1)) -- powerful items
-    item3 = table.insert(Inventory, addItem(ItemDatabase[pool2a].name, math.random(1,4)))
-
-    math.randomseed(love.mouse.getPosition())
-    item4 = table.insert(Inventory, addItem(ItemDatabase[pool2b].name, math.random(1,4)))
+    item2 = table.insert(Inventory, addItem(ItemDatabase[math.random(3,4)].name, 2)) -- powerful items
+    item3 = table.insert(Inventory, addItem(ItemDatabase[math.random(5,6)].name, math.random(2,4)))
+    item4 = table.insert(Inventory, addItem(ItemDatabase[7].name, math.random(2,4)))
     
     return Inventory
 end
@@ -61,7 +63,7 @@ function Tradeoff(stat1, stat2, value1, value2)
     negtrade = value1 
     postrade = value2
     gameState.message = "TRADEOFF"
-    return stat1, stat2
+    return math.floor(stat1), math.floor(stat2)
 end
 
 
