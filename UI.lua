@@ -31,7 +31,7 @@ UI = {}
         
         -- TODO: Load a sprite for playerParty[playerLead]
         love.graphics.setColor(0.5,0.5,0.5)
-        love.graphics.draw(test2, borderSize, 8, 0, 4)
+        love.graphics.draw(playerParty[playerLead].sprite1, borderSize, 8, 0, 4)
     end
 
     function UI.drawEnemy()
@@ -54,7 +54,7 @@ UI = {}
         )
 
         love.graphics.setColor(0.5,0.5,0.5)
-        love.graphics.draw(test, winWidth-borderSize-320,borderSize+40,0,2.2)
+        love.graphics.draw(cpuParty[cpuLead].sprite2, winWidth-borderSize-320,borderSize+40,0,2.2)
 
         -- TODO: Load a sprite for computerParty[computerLead]
         

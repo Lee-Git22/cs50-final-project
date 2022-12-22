@@ -1,8 +1,10 @@
-function monster(name, stats, moveset)
+function monster(name, stats, moveset, sprite1, sprite2)
     return {
         name = name,
         stats = stats,
-        moveset = moveset
+        moveset = moveset,
+        sprite1 = sprite1,
+        sprite2 = sprite2
     }
 end
 
@@ -41,7 +43,9 @@ MonstersIndex = {}
                 "SURF", 
                 "CHUG CHUG", 
                 "CHEAP SHOT",
-                "TURKEY SLAM")
+                "TURKEY SLAM"),
+                love.graphics.newImage("sprites/brewmonkeyback.png"),
+                love.graphics.newImage("sprites/brewmonkeyfront.png")
         ))
 
         chungus = table.insert(MonstersIndex, 
@@ -57,7 +61,9 @@ MonstersIndex = {}
                 "BITE", 
                 "BIG ONE", 
                 "CURSE",
-                "SLAP")
+                "SLAP"),
+                love.graphics.newImage("sprites/chungusback.png"),
+                love.graphics.newImage("sprites/chungusfront.png")
         ))
 
         lebron = table.insert(MonstersIndex, 
@@ -73,7 +79,9 @@ MonstersIndex = {}
                 "FREE THROW", 
                 "SPACE JAM DUNK", 
                 "GOAT MODE",
-                "HARD D")
+                "HARD D"),
+                love.graphics.newImage("sprites/lebronback.png"),
+                love.graphics.newImage("sprites/lebronfront.png")
         ))
 
         gpt3 = table.insert(MonstersIndex, 
@@ -89,7 +97,9 @@ MonstersIndex = {}
                 "DOWNLOAD", 
                 "DEEP LEARN", 
                 "LASER",
-                "COPYPASTA")
+                "COPYPASTA"),
+                love.graphics.newImage("sprites/gpt3back.png"),
+                love.graphics.newImage("sprites/gpt3front.png")
         ))
 
         pikachu = table.insert(MonstersIndex,
@@ -105,7 +115,9 @@ MonstersIndex = {}
                 "TURKEY SLAM", 
                 "SURF", 
                 "SLAP",
-                "THUNDER BOLT")
+                "THUNDER BOLT"),
+                love.graphics.newImage("sprites/pikachuback.png"),
+                love.graphics.newImage("sprites/pikachufront.png")
         ))
 
         jackiechan = table.insert(MonstersIndex,
@@ -121,7 +133,9 @@ MonstersIndex = {}
                 "CHEAP SHOT", 
                 "HARD D", 
                 "NO TROUBLE",
-                "SPACE JAM DUNK")
+                "SPACE JAM DUNK"),
+                love.graphics.newImage("sprites/jackieback.png"),
+                love.graphics.newImage("sprites/jackiefront.png")
         ))
 
         ironman = table.insert(MonstersIndex,
@@ -137,7 +151,9 @@ MonstersIndex = {}
                 "CHUG CHUG", 
                 "DOWNLOAD", 
                 "LASER",
-                "BIG ONE")
+                "BIG ONE"),
+                love.graphics.newImage("sprites/ironmanback.png"),
+                love.graphics.newImage("sprites/ironmanfront.png")
         ))
 
         pieduck = table.insert(MonstersIndex,
@@ -153,7 +169,9 @@ MonstersIndex = {}
                 "NO TROUBLE", 
                 "FREE THROW", 
                 "PIECIC",
-                "DEEP LEARN")
+                "DEEP LEARN"),
+                love.graphics.newImage("sprites/pieduckback.png"),
+                love.graphics.newImage("sprites/pieduckfront.png")
         ))
 
         kratos = table.insert(MonstersIndex,
@@ -169,7 +187,9 @@ MonstersIndex = {}
                 "FREE THROW", 
                 "CURSE", 
                 "SPARTAN RAGE",
-                "SLAP")
+                "SLAP"),
+                love.graphics.newImage("sprites/kratosback.png"),
+                love.graphics.newImage("sprites/kratosfront.png")
         ))
         
     end

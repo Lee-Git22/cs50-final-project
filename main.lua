@@ -4,6 +4,7 @@ MonstersModule = require("MonstersModule")
 ItemsModule = require("ItemsModule")
 AttackModule = require("AttackModule")
 Battle = require("Battle")
+Sfx = require("Sfx")
 
 -- Global menu tables to hold buttons
 mainButtons = {}
@@ -25,9 +26,8 @@ gameState = {
 }
 
 function love.load()
-    test = love.graphics.newImage("brewmonkeyfront.png")
-    test2 = love.graphics.newImage("brewmonkeyback.png")  
 
+   
     
 
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
@@ -38,9 +38,10 @@ function love.load()
     Inventory = loadInventory(Inventory) -- Loads in items into Inventory table
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("FIGHT", function() gameState.phase = "fight" end))
-    table.insert(mainButtons, Menu.newButton("PARTY", function() cpuCombat = resetCombat(cpuCombat)
-        cpuLead = cpuLead + 1 end)) 
     table.insert(mainButtons, Menu.newButton("ITEM", function() gameState.phase = "item" end))
+    table.insert(mainButtons, Menu.newButton("PARTY", function() cpuCombat = resetCombat(cpuCombat)
+        cpuLead = cpuLead + 1; playerCombat = resetCombat(playerCombat)
+        playerLead = playerLead + 1 end)) 
     table.insert(mainButtons, Menu.newButton("QUIT", function() love.event.quit(0) end)) 
     
     
@@ -58,6 +59,9 @@ function love.load()
 end
 
 function love.update(dt)
+    
+    BGM()
+
     gameState.timer = gameState.timer + dt -- Used for menu display and to stop accidental double clicks
     -- Stats used for battle calculations for the current monsters in battle
     playerStats = {
