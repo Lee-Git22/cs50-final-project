@@ -28,7 +28,7 @@ function love.load()
     test = love.graphics.newImage("brewmonkeyfront.png")
     test2 = love.graphics.newImage("brewmonkeyback.png")  
 
-    math.randomseed(os.time()) -- Randoms the seed everytime on launch
+    
 
     MonstersModule.load() -- Loads in monsters into MonstersIndex table
     
@@ -38,25 +38,14 @@ function love.load()
     Inventory = loadInventory(Inventory) -- Loads in items into Inventory table
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("FIGHT", function() gameState.phase = "fight" end))
-    table.insert(mainButtons, Menu.newButton("PARTY", function() playerCombat = resetCombat(playerCombat)
-        playerLead = playerLead + 1 end)) 
+    table.insert(mainButtons, Menu.newButton("PARTY", function() cpuCombat = resetCombat(cpuCombat)
+        cpuLead = cpuLead + 1 end)) 
     table.insert(mainButtons, Menu.newButton("ITEM", function() gameState.phase = "item" end))
     table.insert(mainButtons, Menu.newButton("QUIT", function() love.event.quit(0) end)) 
     
-    -- Loads in 3 monsters for player and 4 for cpu
-    playerPartySize = 4
-    for i = 1,playerPartySize,1
-    do
-        local tmp = math.random(1,9)
-        table.insert(playerParty, MonstersIndex[i]) 
-    end
-
-    cpuPartySize = 5
-    for i = 1,cpuPartySize,1
-    do
-        local tmp = math.random(1,9)
-        table.insert(cpuParty, MonstersIndex[i])
-    end
+    
+    loadPlayerParty()
+    loadCpuParty()
 
     -- Sets first monster in party as party leader (default parameter)
     playerLead = 1 
@@ -147,7 +136,6 @@ function love.update(dt)
                     if entry.name == "ATK BERRY" then
                         itemBonus.DEF, itemBonus.ATK = Tradeoff(itemBonus.DEF, itemBonus.ATK, (playerParty[playerLead].stats.DEF * 0.5), entry.value)
                     elseif entry.name == "DEF BERRY" then
-                        print("def berry used")
                         itemBonus.SPD, itemBonus.DEF = Tradeoff(itemBonus.SPD, itemBonus.DEF, (playerParty[playerLead].stats.SPD * 0.5), entry.value)
                     elseif entry.name == "SPD BERRY" then
                         itemBonus.ATK, itemBonus.SPD = Tradeoff(itemBonus.SPD, itemBonus.SPD, (playerParty[playerLead].stats.ATK * 0.5), entry.value)

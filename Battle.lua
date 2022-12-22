@@ -19,6 +19,40 @@ itemBonus = {
     SPD = 0
 }
 
+function loadPlayerParty()
+    -- Loads in 3 monsters for player and 4 for cpu
+    playerPartySize = 3
+
+    local p1 = math.random(1,3)
+    local p2 = math.random(4,6)
+    local p3 = math.random(7,9)
+    
+    table.insert(playerParty, MonstersIndex[p1])
+    table.insert(playerParty, MonstersIndex[p2])
+    table.insert(playerParty, MonstersIndex[p3])
+
+    return
+end
+
+function loadCpuParty()
+    -- Loads in 3 monsters for player and 4 for cpu
+    cpuPartySize = 4
+
+    local p1 = math.random(1,3)
+    local p2 = math.random(4,6)
+    local p3 = math.random(7,9)
+    local p4 = math.random(1,9)
+    table.insert(cpuParty, MonstersIndex[p4])
+    table.insert(cpuParty, MonstersIndex[p2])
+    table.insert(cpuParty, MonstersIndex[p3])
+    table.insert(cpuParty, MonstersIndex[p1])
+
+    return
+end
+
+
+
+
 
 -- Initialize player inventory 
 Inventory = {}
