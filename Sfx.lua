@@ -33,14 +33,13 @@ function SFX(gameState)
     end
 
     if gameState.phase == "FAINT" then
-        if playSFX then        
+        if playSFX then
             love.audio.play(Opponent.cry)
         end
     end
 
     if gameState.message == "attack" or gameState.message == "cpuAttack" then
         if playSFX then
-            print("attakk")        
             love.audio.play(attacksfx)
         end
     end

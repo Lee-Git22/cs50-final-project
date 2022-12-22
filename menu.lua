@@ -301,8 +301,19 @@ Menu = {}
                 textboxX + borderSize,
                 textboxY + borderSize
             )
-            end
+        end
 
+        if gameState.message == "HELP" then
+            -- Displays action message
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.print(
+                string.format("Select with left click,\nBoth Trainers have 4 Fighters\nRight click to go back"),
+                font,
+                textboxX + borderSize,
+                textboxY + borderSize
+            )
+        end
+        
     end
 
 

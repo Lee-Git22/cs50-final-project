@@ -22,17 +22,21 @@ itemBonus = {
 }
 
 function loadPlayerParty()
-    -- Loads in 3 monsters for player and 4 for cpu
-    playerPartySize = 1
-
-    local p1 = math.random(1,3)
-    local p2 = math.random(4,6)
-    local p3 = math.random(7,9)
+    -- Loads in 4 monsters for player and 5 for cpu
+    playerPartySize = 3
+    
+    local p1 = math.random(1,9)
+    math.randomseed(love.mouse.getPosition()) -- for better RNG
+    local p2 = math.random(1,9)
+    math.randomseed(os.time()-love.mouse.getPosition())
+    local p3 = math.random(1,5)
+    local p4 = math.random(4,9)
     
 
-    table.insert(playerParty, MonstersIndex[1])
-    -- table.insert(playerParty, MonstersIndex[2])
-    -- table.insert(playerParty, MonstersIndex[3])
+    table.insert(playerParty, MonstersIndex[p4])
+    table.insert(playerParty, MonstersIndex[p3])
+    table.insert(playerParty, MonstersIndex[p2])
+    table.insert(playerParty, MonstersIndex[p1])
 
 
     return
@@ -40,17 +44,21 @@ end
 
 function loadCpuParty()
     -- Loads in 3 monsters for player and 4 for cpu
-    cpuPartySize = 1
+    cpuPartySize = 4
 
-    local p1 = math.random(1,3)
-    local p2 = math.random(4,6)
-    local p3 = math.random(7,9)
-    local p4 = math.random(1,9)
 
-    table.insert(cpuParty, MonstersIndex[1])
-    -- table.insert(cpuParty, MonstersIndex[4])
-    -- table.insert(cpuParty, MonstersIndex[3])
-    -- table.insert(cpuParty, MonstersIndex[4])
+    local p1 = math.random(1,9)
+    math.randomseed(love.mouse.getPosition()) -- for better RNG
+    local p2 = math.random(1,9)
+    math.randomseed(os.time()-love.mouse.getPosition())
+    local p3 = math.random(1,5)
+    local p4 = math.random(4,9)
+
+    table.insert(cpuParty, MonstersIndex[p1])
+    table.insert(cpuParty, MonstersIndex[p2])
+    table.insert(cpuParty, MonstersIndex[p3])
+    table.insert(cpuParty, MonstersIndex[p4])
+
 
     return
 end
@@ -129,7 +137,7 @@ function resetCombat(table)
 end 
 
 function calcBuff(gameState, entry, table)
-    math.randomseed(os.time())
+    math.randomseed(os.time()-love.mouse.getPosition())
     hit = math.random()
 
     if hit <= entry.parameters.hitRate then
@@ -151,7 +159,7 @@ function calcBuff(gameState, entry, table)
 end
 
 function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
-    math.randomseed(os.time())
+    math.randomseed(os.time()-love.mouse.getPosition())
     hit = math.random()
     hitValue = (entry.parameters.base + stat1.ATK) * entry.parameters.multiplier
     typeBonus = getCounter(entry.TYPE, stat2.TYPE)
@@ -191,11 +199,11 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
 
             if comb1.DMG >= Self.stats.HP then
                 comb1.DMG = Self.stats.HP - 1
-                gameState.message = "RISKY" -- change later
+                gameState.message = "RISKY" 
             end
         end
         return gameState, entry, comb1, stat1, comb2, stat2
-        --print("MISSED") -- TODO: add a miss dialogue scene 
+    
     end
     return gameState, entry, comb1, stat1, comb2, stat2
 end
@@ -208,7 +216,7 @@ function getCPUmove()
         cpuParty[cpuLead].moveset.move4
     }
     
-    math.randomseed(os.time())
+    --math.randomseed(os.time())
     move = math.random(4)
 
     if move == 1 then

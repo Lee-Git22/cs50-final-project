@@ -35,12 +35,14 @@ function love.load()
     -- Options for main menu
     table.insert(mainButtons, Menu.newButton("FIGHT", function() gameState.phase = "fight" end))
     table.insert(mainButtons, Menu.newButton("ITEM", function() gameState.phase = "item" end))
-    table.insert(mainButtons, Menu.newButton("PARTY", function() playSFX = true end)) 
+    table.insert(mainButtons, Menu.newButton("HELP", function() gameState.phase ="HELP" end)) 
     table.insert(mainButtons, Menu.newButton("QUIT", function() love.event.quit(0) end)) 
     
-    
+
     loadPlayerParty()
     loadCpuParty()
+
+
 
     -- Sets first monster in party as party leader (default parameter)
     playerLead = 1 
@@ -561,26 +563,31 @@ function love.draw()
     end
 
     if gameState.phase == "WIN" then
-        Menu.loadDialogue(gameState)
-
+        cpuUI = false
+        playerUI = false
         if gameState.timer >= 1.0 then
-            cpuUI = false
-            playerUI = false
-    
             startingGameUI = true
+            Menu.loadDialogue(gameState)
         end
     end
 
     if gameState.phase == "LOSE" then
-        Menu.loadDialogue(gameState)
- 
+        cpuUI = false
+        playerUI = false
         if gameState.timer >= 1.0 then
-            cpuUI = false
-            playerUI = false
-    
             startingGameUI = true
+            Menu.loadDialogue(gameState)
         end
     end
     
+    if gameState.phase == "HELP" then
+        gameState.message = "HELP"
+        Menu.loadDialogue(gameState)
+        local rightClick = love.mouse.isDown(2)
+        if gameState.timer >= 10 or rightClick and gameState.timer >= 2 then
+            gameState.phase = "main"
+            gameState.timer = 0
+        end
+    end
    
 end
