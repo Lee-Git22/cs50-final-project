@@ -8,15 +8,15 @@ playerUI = false
 cpuUI = false
 
 UI = {}
-
+    -- Draws in grey background 
     function UI.drawBackground()
-        -- Draws in background
         love.graphics.setColor(0.8, 0.8, 0.8)
         love.graphics.rectangle("fill", borderSize, borderSize, backgroundWidth, backgroundHeight)
     end
-    
+
+    -- Draws player fighter name and HP
     function UI.drawPlayer()
-        -- Draws player monster stats
+
         love.graphics.setColor(1, 1, 1)
         love.graphics.rectangle("fill", winWidth * 0.65 - borderSize, (backgroundHeight) * 0.80 + borderSize, winWidth * 0.35, backgroundHeight * 0.20)
         
@@ -34,16 +34,13 @@ UI = {}
             (backgroundHeight) * 0.90 + borderSize
         )
 
-
-        -- Loads player sprite
+        -- Loads player fighter sprite
         love.graphics.setColor(0.8,0.8,0.9)
         love.graphics.draw(playerParty[playerLead].sprite1, borderSize, 8, 0, 4)
-
-        
     end
 
+    -- Draws CPU fighter name and HP
     function UI.drawEnemy()
-        
         love.graphics.setColor(1, 1, 1)
         love.graphics.rectangle("fill", borderSize, borderSize, winWidth * 0.35, backgroundHeight * 0.20)
         
@@ -61,15 +58,8 @@ UI = {}
             backgroundHeight * 0.10 + borderSize
         )
 
-
-        -- Loads cpu sprite
+        -- Loads cpu fighter sprite
         love.graphics.setColor(0.8,0.8,0.9)
-        love.graphics.draw(cpuParty[cpuLead].sprite2, winWidth-borderSize-320,borderSize+40,0,2.2)
-
-
-        
-        
+        love.graphics.draw(cpuParty[cpuLead].sprite2, winWidth-borderSize-320,borderSize+40,0,2.2) 
     end
-
-
 return UI

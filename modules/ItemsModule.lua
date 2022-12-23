@@ -1,10 +1,4 @@
-function addItem(name, uses)
-    return {
-        name = name,
-        uses = uses
-    }
-end
-
+-- For creating new items
 function newItem(name, TYPE, value)
     return {
         name = name,
@@ -13,11 +7,8 @@ function newItem(name, TYPE, value)
     }
 end
 
-
-
+-- Holds information for all items
 ItemDatabase = {}
-
-
     function ItemDatabase.load()
         
         partytime = table.insert(ItemDatabase, 
@@ -76,11 +67,7 @@ ItemDatabase = {}
             20
         ))
 
-
     end
-
-
-
 return ItemDatabase
 
 

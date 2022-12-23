@@ -1,28 +1,23 @@
-
-
 -- Initialize player and computer stats for first monster in party
-playerCombat = {
-    DMG = 0,
-    ATK = 1,
+playerCombat = { 
+    DMG = 0, -- Total damage the fighter is currently sustaining
+    ATK = 1, -- Buff/Debuff multipliers
     DEF = 1,
     SPD = 1
 }
-
 cpuCombat = {
     DMG = 0,
     ATK = 1,
     DEF = 1,
     SPD = 1
 }
-
 itemBonus = {
-    ATK = 0,
+    ATK = 0, -- Flat Increase/decrease from items
     DEF = 0,
     SPD = 0
 }
-
+-- Loads in 4 monsters for both trainers
 function loadPlayerParty()
-    -- Loads in 4 monsters for both trainers
     playerPartySize = 4
     
     local p1 = math.random(1,9)
@@ -33,15 +28,14 @@ function loadPlayerParty()
     local p4 = math.random(4,9)
     
     -- For go using a loop to have more variety due to pseudo RNG limitations
-    table.insert(playerParty, MonstersIndex[p4])
-    table.insert(playerParty, MonstersIndex[p3])
-    table.insert(playerParty, MonstersIndex[p2])
-    table.insert(playerParty, MonstersIndex[p1])
+    table.insert(playerParty, FightersIndex[p4])
+    table.insert(playerParty, FightersIndex[p3])
+    table.insert(playerParty, FightersIndex[p2])
+    table.insert(playerParty, FightersIndex[p1])
     
     playerLead = 1 
     return
 end
-
 function loadCpuParty()
     cpuPartySize = 4
 
@@ -52,13 +46,20 @@ function loadCpuParty()
     local p3 = math.random(1,5)
     local p4 = math.random(4,9)
 
-    table.insert(cpuParty, MonstersIndex[p1])
-    table.insert(cpuParty, MonstersIndex[p2])
-    table.insert(cpuParty, MonstersIndex[p3])
-    table.insert(cpuParty, MonstersIndex[p4])
+    table.insert(cpuParty, FightersIndex[p1])
+    table.insert(cpuParty, FightersIndex[p2])
+    table.insert(cpuParty, FightersIndex[p3])
+    table.insert(cpuParty, FightersIndex[p4])
 
     cpuLead = 1
     return
+end
+
+function addItem(name, uses)
+    return {
+        name = name,
+        uses = uses
+    }
 end
 
 -- Initialize player inventory 
@@ -73,8 +74,9 @@ function loadInventory(Inventory)
     return Inventory
 end
 
+-- Reduce DMG based on healValue and display message
 function Heal(DMG, healValue)
-    DMG = DMG - healValue -- Reduce DMG based on healValue
+    DMG = DMG - healValue 
     recovered = healValue
     if DMG < 0 then
         recovered = healValue + DMG -- Determines actual amount if over healed
@@ -85,18 +87,20 @@ function Heal(DMG, healValue)
     return DMG
 end
 
-function Recruit(value) -- Adds number amount of monsters into party
+-- Adds number amount of monsters into party and display message
+function Recruit(value) 
     addedNames = {}
     for i = 1,value,1
     do
         local tmp = math.random(1,9)
-        table.insert(playerParty, MonstersIndex[tmp])
-        table.insert(addedNames, MonstersIndex[tmp].name) 
+        table.insert(playerParty, FightersIndex[tmp])
+        table.insert(addedNames, FightersIndex[tmp].name) 
     end
     playerPartySize = playerPartySize + value
     gameState.message = "RECRUIT"
 end
 
+-- Decreases 1 stat and increases another based on item used
 function Tradeoff(stat1, stat2, value1, value2)
     stat1 = stat1 - value1
     stat2 = stat2 + value2
@@ -107,7 +111,7 @@ function Tradeoff(stat1, stat2, value1, value2)
     return math.floor(stat1), math.floor(stat2)
 end
 
-
+-- Used to determine type bonuses in battle calculations
 function getCounter(type1, type2)
     if type1 == "HUMAN" and type2 == "ANIMAL" then
         return 1.25
@@ -122,6 +126,7 @@ function getCounter(type1, type2)
     return 1.0
 end
 
+-- Used to reset combat stats for new fighter
 function resetCombat(table)
         table.DMG = 0
         table.ATK = 1
@@ -130,6 +135,7 @@ function resetCombat(table)
     return table
 end 
 
+-- Determines if a buff or debuff attack was successful, and manipulates stats accordingly
 function calcBuff(gameState, entry, table)
     math.randomseed(os.time()-love.mouse.getPosition())
     hit = math.random()
@@ -152,6 +158,7 @@ function calcBuff(gameState, entry, table)
     return gameState, table
 end
 
+-- Handles battle calculations for attacks
 function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
     math.randomseed(os.time()-love.mouse.getPosition())
     hit = math.random()
@@ -164,7 +171,6 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
         if typeBonus == 1.25 then 
             gameState.message = "SUPER EFFECTIVE!"
         end
-
         if typeBonus == 0.8 then
             gameState.message = "not very effective..."
         end
@@ -177,8 +183,7 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
         end
 
         if comb2.DMG >= Opponent.stats.HP then -- For killing blows
-            comb2.DMG = Opponent.stats.HP -- Set damage equal to max HP
-            
+            comb2.DMG = Opponent.stats.HP -- Set damage equal to max HP to prevent overkill DMG
             gameState.message = "FAINT"
         end
 
@@ -186,12 +191,11 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
 
     else  -- Miss
         gameState.message = "MISS"
-
         if entry.TYPE == "RISKY" then -- hits self for 12.5% hp 
             comb1.DMG = comb1.DMG + math.floor(Self.stats.HP * 0.125)
             gameState.message = "RISKY"
 
-            if comb1.DMG >= Self.stats.HP then
+            if comb1.DMG >= Self.stats.HP then -- Prevents RISKY hits from fainting itself
                 comb1.DMG = Self.stats.HP - 1
                 gameState.message = "RISKY" 
             end
@@ -203,7 +207,9 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
     return gameState, entry, comb1, stat1, comb2, stat2
 end
 
+-- Randomly selects a CPU move, cpu can not use items
 function getCPUmove()
+    -- Loads available moves for current cpu fighter
     cpuMoves = {
         cpuParty[cpuLead].moveset.move1, 
         cpuParty[cpuLead].moveset.move2, 
@@ -211,9 +217,7 @@ function getCPUmove()
         cpuParty[cpuLead].moveset.move4
     }
     
-    --math.randomseed(os.time())
     move = math.random(4)
-
     if move == 1 then
         return cpuMoves[1]
     elseif move == 2 then

@@ -1,5 +1,6 @@
-MonstersModule = require("modules/MonstersModule")
+FightersModule = require("modules/FightersModule")
 
+-- For adding new attacks into AttackDatabase
 function newEntry(name, TYPE, fn)
     return {
         name = name,
@@ -8,7 +9,7 @@ function newEntry(name, TYPE, fn)
     }
 end
 
--- outputs a single value from attack's base damage + monsters attack stat times multiplier
+-- Functions used to set parameters for battle calculations
 function Attack(base, multiplier, hitRate)
     return {
         base = base,
@@ -16,8 +17,6 @@ function Attack(base, multiplier, hitRate)
         hitRate = hitRate
     }
 end
-
-
 function Buff(ATK, DEF, SPD, hitRate)
     return {
         ATK = ATK,
@@ -27,10 +26,12 @@ function Buff(ATK, DEF, SPD, hitRate)
     }
 end
 
+-- Consists of all attacks and their parameters
 AttackDataBase = {}
+    -- Loads the datatable on game start
     function AttackDataBase.load()
 
-        -- RISKY MOVES --------------------------------        
+        -- RISKY MOVES --
         bigone = table.insert(AttackDataBase, 
         newEntry(
             "BIG ONE",
@@ -53,7 +54,7 @@ AttackDataBase = {}
         ))
 
 
-        -- MAGIC MOVES --------------------------------
+        -- MAGIC MOVES --
         piecic = table.insert(AttackDataBase, 
         newEntry(
             "PIECIC",
@@ -75,7 +76,7 @@ AttackDataBase = {}
             Attack(0, 1, 1)
         ))
 
-        -- ANIMAL MOVES --------------------------------
+        -- ANIMAL MOVES --
         bite = table.insert(AttackDataBase,
         newEntry(
             "BITE",
@@ -90,7 +91,7 @@ AttackDataBase = {}
             Attack(-20, 1.3, 1)
         ))
 
-        -- MACHINE MOVES --------------------------------
+        -- MACHINE MOVES --
         laser = table.insert(AttackDataBase,
         newEntry(
             "LASER",
@@ -105,7 +106,7 @@ AttackDataBase = {}
             Attack(35, 0.85, 0.9)
         ))
 
-        -- HUMAN MOVES --------------------------------
+        -- HUMAN MOVES --
         freethrow = table.insert(AttackDataBase, 
         newEntry(
             "FREE THROW",
@@ -127,7 +128,7 @@ AttackDataBase = {}
             Attack(50, 0.8, 0.925)
         ))
 
-        --BUFF/DEBUFFS --------------------------------
+        --BUFF/DEBUFFS --
         notrouble = table.insert(AttackDataBase, 
         newEntry(
             "NO TROUBLE",
@@ -176,6 +177,6 @@ AttackDataBase = {}
             "DEBUFF",
             Buff(1, 0.8, 0.8, 0.85)
         ))
+
     end
-       
 return AttackDataBase

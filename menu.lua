@@ -2,20 +2,19 @@ winWidth = love.graphics.getWidth()
 winHeight = love.graphics.getHeight()
 font = love.graphics.newFont(32)
 
-
-borderSize = 12
 -- For dialogue box
+borderSize = 12
 BOX_WIDTH = winWidth - borderSize
 BOX_HEIGHT = winHeight * 0.3 
 
 -- For standard buttons
 MARGIN = 1
--- total_height
 totalMenuHeight = winHeight * 0.3; 
 BUTTON_HEIGHT = (totalMenuHeight - borderSize*2)/ 4 + 2
+
 Menu = {}
 
-    -- Creates a new button class
+    -- Used for main/fight/item buttons
     function Menu.newButton(text, fn)
         return {
             text = text,
@@ -23,9 +22,7 @@ Menu = {}
         }
     end
     
-    -- Loads a button 
-    function Menu.loadButton(buttonColor, text, buttonX, buttonY, buttonWidth)
-         
+    function Menu.loadButton(buttonColor, text, buttonX, buttonY, buttonWidth) 
             -- Draws a button
             love.graphics.setColor(unpack(buttonColor));
             love.graphics.rectangle(
@@ -46,7 +43,7 @@ Menu = {}
         )
     end
 
-    -- Loads a dialogue box
+    -- Loads respective dialogue box based on gamestate inputs
     function Menu.loadDialogue(gameState, monsterName, input)
 
         local textboxX = borderSize
@@ -143,7 +140,6 @@ Menu = {}
         end
 
         if gameState.message == "TRADEOFF" then
-            
             if gameState.playerInput == "ATK BERRY" then
                             
                 love.graphics.setColor(0.2, 0.2, 0.2)
@@ -178,8 +174,6 @@ Menu = {}
                     textboxY + borderSize
                 )
             end
-
-
         end
 
         if gameState.message == "SUPER EFFECTIVE!" 
@@ -312,9 +306,6 @@ Menu = {}
                 textboxX + borderSize,
                 textboxY + borderSize
             )
-        end
-        
+        end 
     end
-
-
 return Menu

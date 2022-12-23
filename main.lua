@@ -1,14 +1,14 @@
 -- Importing custom modules
 Menu = require("Menu") -- For drawing messages and menus in the lower parts of the game
 UI = require("UI") -- For drawing the battle phase UI and sprites
-MonstersModule = require("modules/MonstersModule") -- The monster data table that holds base stats and movesets
+FightersModule = require("modules/FightersModule") -- The fighter data table that holds base stats and movesets
 ItemsModule = require("modules/ItemsModule") -- The items data table 
 AttackModule = require("modules/AttackModule") -- The attacks data table that details specific moveset parameters
 Battle = require("Battle") -- Handles all battle related calculations and gamestate messages for results of each round
 Sfx = require("Sfx") -- Holds info for sound effects used in battle
 
 -- Global menu tables 
-MonstersIndex = {} 
+FightersIndex = {} 
 AttackDataBase = {}
 ItemDatabase = {}
 
@@ -29,7 +29,7 @@ gameState = {
 function love.load()
 
     -- Loads the respective modules
-    MonstersModule.load() 
+    FightersModule.load() 
     AttackModule.load() 
     ItemsModule.load() 
     Inventory = loadInventory(Inventory) -- Loads in items into Inventory table

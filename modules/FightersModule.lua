@@ -1,4 +1,5 @@
-function monster(name, stats, moveset, sprite1, sprite2, cry)
+-- For creating Fighters
+function fighter(name, stats, moveset, sprite1, sprite2, cry)
     return {
         name = name,
         stats = stats,
@@ -8,7 +9,7 @@ function monster(name, stats, moveset, sprite1, sprite2, cry)
         cry = cry
     }
 end
-
+-- Sets the stats for each fighter
 function stats(TYPE, HP, ATK, DEF, SPD)
     return {
         TYPE = TYPE,
@@ -18,7 +19,7 @@ function stats(TYPE, HP, ATK, DEF, SPD)
         SPD = SPD
     }
 end
-
+-- Sets the moveset for each fighter
 function moveset(move1, move2, move3, move4)
     return {
         move1 = move1,
@@ -28,11 +29,12 @@ function moveset(move1, move2, move3, move4)
     }
 end
 
-MonstersIndex = {}
-    function MonstersIndex.load()
+-- Holds fighter information for all fighters
+FightersIndex = {}
+    function FightersIndex.load()
 
-        brewmonkey = table.insert(MonstersIndex, 
-        monster(
+        brewmonkey = table.insert(FightersIndex, 
+        fighter(
             "BREW MONKEY", 
             stats(
                 "ANIMAL",
@@ -50,8 +52,8 @@ MonstersIndex = {}
                 love.audio.newSource("audio/monstercry/brewmonkeycry.wav", "static")
         ))
 
-        chungus = table.insert(MonstersIndex, 
-        monster(
+        chungus = table.insert(FightersIndex, 
+        fighter(
             "BIG CHUNGUS", 
             stats(
                 "ANIMAL",
@@ -69,8 +71,8 @@ MonstersIndex = {}
                 love.audio.newSource("audio/monstercry/chunguscry.wav", "static")
         ))
 
-        lebron = table.insert(MonstersIndex, 
-        monster(
+        lebron = table.insert(FightersIndex, 
+        fighter(
             "LEBRON JAMES", 
             stats(
                 "HUMAN",
@@ -88,8 +90,8 @@ MonstersIndex = {}
                 love.audio.newSource("audio/monstercry/lebroncry.wav", "static")
         ))
 
-        gpt3 = table.insert(MonstersIndex, 
-        monster(
+        gpt3 = table.insert(FightersIndex, 
+        fighter(
             "GPT-3", 
             stats(
                 "MACHINE",
@@ -107,8 +109,8 @@ MonstersIndex = {}
                 love.audio.newSource("audio/monstercry/gpt3cry.wav", "static")
         ))
 
-        pikachu = table.insert(MonstersIndex,
-        monster(
+        pikachu = table.insert(FightersIndex,
+        fighter(
             "PIKACHU",
             stats(
                 "MAGIC",
@@ -126,8 +128,8 @@ MonstersIndex = {}
                 love.audio.newSource("audio/monstercry/pikachucry.wav", "static")
         ))
 
-        jackiechan = table.insert(MonstersIndex,
-        monster(
+        jackiechan = table.insert(FightersIndex,
+        fighter(
             "JACKIE CHAN",
             stats(
                 "HUMAN",
@@ -145,8 +147,8 @@ MonstersIndex = {}
                 love.audio.newSource("audio/monstercry/jackiecry.wav", "static")
         ))
 
-        ironman = table.insert(MonstersIndex,
-        monster(
+        ironman = table.insert(FightersIndex,
+        fighter(
             "IRON MAN",
             stats(
                 "MACHINE",
@@ -164,8 +166,8 @@ MonstersIndex = {}
                 love.audio.newSource("audio/monstercry/ironmancry.wav", "static")
         ))
 
-        pieduck = table.insert(MonstersIndex,
-        monster(
+        pieduck = table.insert(FightersIndex,
+        fighter(
             "PIE DUCK",
             stats(
                 "ANIMAL",
@@ -183,8 +185,8 @@ MonstersIndex = {}
                 love.audio.newSource("audio/monstercry/pieduckcry.wav", "static")
         ))
 
-        kratos = table.insert(MonstersIndex,
-        monster(
+        kratos = table.insert(FightersIndex,
+        fighter(
             "KRATOS",
             stats(
                 "MAGIC",
@@ -203,5 +205,5 @@ MonstersIndex = {}
         ))
         
     end
-return MonstersIndex
+return FightersIndex
 
