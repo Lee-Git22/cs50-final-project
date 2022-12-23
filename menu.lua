@@ -44,14 +44,14 @@ Menu = {}
     end
 
     -- Loads respective dialogue box based on gamestate inputs
-    function Menu.loadDialogue(gameState, monsterName, input)
+    function Menu.loadDialogue(gameState, fighterName, input)
 
         local textboxX = borderSize
         local textboxY = winHeight - BOX_HEIGHT 
         local textboxWidth = BOX_WIDTH - borderSize
         local textboxHeight = BOX_HEIGHT - borderSize
         
-        monsterName = monsterName
+        fighterName = fighterName
         input = input
 
         -- Draws textbox border
@@ -68,7 +68,7 @@ Menu = {}
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("Straw Hat PETER wants to battle!\n\nCLICK TO START", monsterName, input),
+                string.format("Straw Hat PETER wants to battle!\n\nCLICK TO START", fighterName, input),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -79,7 +79,7 @@ Menu = {}
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s used %s!", monsterName, input),
+                string.format("%s used %s!", fighterName, input),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -90,7 +90,7 @@ Menu = {}
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("Enemy %s\nused %s!", monsterName, input),
+                string.format("Enemy %s\nused %s!", fighterName, input),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -235,7 +235,7 @@ Menu = {}
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("%s FAINTED", monsterName),
+                string.format("%s FAINTED", fighterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -246,7 +246,7 @@ Menu = {}
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("CPU sends out %s", monsterName),
+                string.format("CPU sends out %s", fighterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
@@ -257,7 +257,7 @@ Menu = {}
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("Player sends out %s", monsterName),
+                string.format("Player sends out %s", fighterName),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
