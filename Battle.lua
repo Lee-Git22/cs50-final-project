@@ -67,8 +67,8 @@ function loadInventory(Inventory)
     -- Player gets 2 random powerful pool1 items and random amounts of pool2 items
     item1 = table.insert(Inventory, addItem(ItemDatabase[math.random(1,2)].name, 1)) -- powerful items
     item2 = table.insert(Inventory, addItem(ItemDatabase[math.random(3,4)].name, 2)) -- powerful items
-    item3 = table.insert(Inventory, addItem(ItemDatabase[math.random(5,6)].name, math.random(2,4)))
-    item4 = table.insert(Inventory, addItem(ItemDatabase[math.random(7,8)].name, math.random(2,4)))
+    item3 = table.insert(Inventory, addItem(ItemDatabase[math.random(4,6)].name, math.random(2,4)))
+    item4 = table.insert(Inventory, addItem(ItemDatabase[math.random(6,8)].name, math.random(2,4)))
     
     return Inventory
 end
@@ -196,6 +196,7 @@ function calcAttack(gameState, entry, comb1, stat1, comb2, stat2)
                 gameState.message = "RISKY" 
             end
         end
+        
         return gameState, entry, comb1, stat1, comb2, stat2
     
     end

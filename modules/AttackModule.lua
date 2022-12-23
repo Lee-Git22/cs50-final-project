@@ -1,4 +1,4 @@
-MonstersModule = require("MonstersModule")
+MonstersModule = require("modules/MonstersModule")
 
 function newEntry(name, TYPE, fn)
     return {

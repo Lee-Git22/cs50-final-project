@@ -1,6 +1,9 @@
 battleBGM = love.audio.newSource("audio/battle.wav", "static")
 battleBGM:setVolume(0.5)
 
+clicksfx = love.audio.newSource("audio/clicksfx.wav", "static")
+clicksfx:setVolume(0.5)
+
 attacksfx = love.audio.newSource("audio/attacksfx.wav", "static")
 critsfx = love.audio.newSource("audio/critsfx.wav", "static")
 anticritsfx = love.audio.newSource("audio/anticritsfx.wav", "static")
@@ -9,7 +12,6 @@ buffsfx = love.audio.newSource("audio/buffsfx.wav", "static")
 debuffsfx = love.audio.newSource("audio/debuffsfx.wav", "static")
 recruitsfx = love.audio.newSource("audio/recruitsfx.wav", "static")
 healsfx = love.audio.newSource("audio/healsfx.wav", "static")
-clicksfx = love.audio.newSource("audio/clicksfx.wav", "static")
 
 function BGM(gameState)   
     if not battleBGM:isPlaying() then

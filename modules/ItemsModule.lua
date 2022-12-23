@@ -62,8 +62,6 @@ ItemDatabase = {}
             20
         ))
 
-
-
         defberry = table.insert(ItemDatabase, 
         newItem(
             "DEF BERRY",

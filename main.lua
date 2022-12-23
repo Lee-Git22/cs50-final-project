@@ -1,9 +1,9 @@
 -- Importing custom modules
 Menu = require("Menu") -- For drawing messages and menus in the lower parts of the game
 UI = require("UI") -- For drawing the battle phase UI and sprites
-MonstersModule = require("MonstersModule") -- The monster data table that holds base stats and movesets
-ItemsModule = require("ItemsModule") -- The items data table 
-AttackModule = require("AttackModule") -- The attacks data table that details specific moveset parameters
+MonstersModule = require("modules/MonstersModule") -- The monster data table that holds base stats and movesets
+ItemsModule = require("modules/ItemsModule") -- The items data table 
+AttackModule = require("modules/AttackModule") -- The attacks data table that details specific moveset parameters
 Battle = require("Battle") -- Handles all battle related calculations and gamestate messages for results of each round
 Sfx = require("Sfx") -- Holds info for sound effects used in battle
 
@@ -182,8 +182,6 @@ function love.update(dt)
         end       
     end
 
-    
-    
 end
 
 function love.draw()
@@ -192,7 +190,7 @@ function love.draw()
     
     -- For starting the game
     if startingGameUI then
-        love.graphics.setColor(0.5,0.5,0.5)
+        love.graphics.setColor(0.8,0.8,0.9)
         love.graphics.draw(playerSprite, borderSize, 8, 0, 4) -- Draw player sprite
         love.graphics.draw(cpuSprite, winWidth-borderSize-320,borderSize+40,0,2.2) -- Draw CPU sprite
     end
@@ -310,12 +308,9 @@ function love.draw()
         end
     end
 
-    -- Represents current y position for drawing buttons
-    local cursorY = 0
-
     -- The main phase where player selects the action for the round
     if gameState.phase == "MAIN" then
-        cursorY = 0 -- Resets cursor
+        local cursorY = 0 -- Represents current y position for drawing buttons
         
         -- Loads the main menu
         for i, button in ipairs(mainButtons) do            
@@ -349,7 +344,7 @@ function love.draw()
 
     -- Switch to Fight phase and draw menus
     if gameState.phase == "FIGHT" then
-        cursorY = 0
+        local cursorY = 0
 
         -- Draws buttons in same way for main menu
         for i, moves in ipairs(playerList) do
@@ -359,8 +354,7 @@ function love.draw()
             local buttonColor = {0.9, 0.9, 0.9, 1.0}
 
             local mx, my = love.mouse.getPosition()
-            local hot = mx > buttonX and mx < winWidth and 
-                       my > buttonY and my < buttonY + BUTTON_HEIGHT;
+            local hot = mx > buttonX and mx < winWidth and my > buttonY and my < buttonY + BUTTON_HEIGHT;
             if hot then
                 buttonColor = {0.4, 0.4, 0.4, 1}
             end
@@ -401,7 +395,7 @@ function love.draw()
 
     -- Switch to item menu 
     if gameState.phase == "ITEM" then
-        cursorY = 0
+        local cursorY = 0
         
         -- Draws the item buttons same way for main/fight buttons
         for i, items in ipairs(Inventory) do  
@@ -412,8 +406,7 @@ function love.draw()
             local buttonColor = {0.9, 0.9, 0.9, 1.0}
 
             local mx, my = love.mouse.getPosition()
-            local hot = mx > buttonX and mx < winWidth and 
-                       my > buttonY and my < buttonY + BUTTON_HEIGHT;
+            local hot = mx > buttonX and mx < winWidth and my > buttonY and my < buttonY + BUTTON_HEIGHT;
             if hot then
                 buttonColor = {0.4, 0.4, 0.4, 1}
             end
@@ -455,13 +448,12 @@ function love.draw()
         end
     end
 
-    -- Transitionary dialogue phases depending on whether attack or item was selected from main phase
+    -- Displays Monster use X OR PLAYER used Y based on gameState.message
     if gameState.phase == "DIALOGUE" then   
-        -- Displays Monster use X OR PLAYER used Y based on gameState.message
         Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
         
         if gameState.timer >= 1.5 then
-            if gameState.message == "ATTACK" then
+            if gameState.message == "ATTACK" then -- Transitionary dialogue phases depending on whether attack or item was selected from main phase
                 gameState.phase = "PLAYERROUND" -- For battle calculations in love.update
             else 
                 gameState.phase = "ITEMROUND" -- For item calculations in love.update
@@ -470,7 +462,6 @@ function love.draw()
         end
     end
     if gameState.phase == "CPUDIALOGUE" then
-        -- Displays CPU monster used X 
         gameState.message = "CPUATTACK"
         Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
         
@@ -482,7 +473,6 @@ function love.draw()
 
     -- Displays the results of player or cpu action based on message from update function
     if gameState.phase == "PLAYERACTION" then
-       
         Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
 
         if gameState.timer >= 2 then -- After 2 seconds go to turn 2 or reset
@@ -500,7 +490,6 @@ function love.draw()
         Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
 
         if gameState.timer >= 1.5 then
-
             if turn == 1 then 
                 -- Go to player's turn and display player's attack message
                 gameState.message = "ATTACK"
@@ -522,12 +511,10 @@ function love.draw()
             -- Determine which side fainted and go to respective phase
             if cpuStats.HP == 0 then
                 cpuUI = false -- for sprite transition 
-                gameState.phase = "CPUSELECT" -- cpu switch
-                
+                gameState.phase = "CPUSELECT" -- cpu switch   
             else 
                 playerUI = false
                 gameState.phase = "PLAYERSELECT" -- player switch
-                
             end
             gameState.timer = 0 
         end
@@ -560,7 +547,6 @@ function love.draw()
             love.audio.play(clicksfx)
             gameState.phase = "MAIN"
             gameState.timer = 0
-
         end
     end
 
@@ -569,7 +555,8 @@ function love.draw()
         gameState.message = "HELP"
         Menu.loadDialogue(gameState)
         local rightClick = love.mouse.isDown(2)
-        if gameState.timer >= 10 or rightClick and gameState.timer >= 2 then
+        if gameState.timer >= 10 or rightClick and gameState.timer >= 0.5 then
+            love.audio.play(clicksfx)
             gameState.phase = "MAIN"
             gameState.timer = 0
         end

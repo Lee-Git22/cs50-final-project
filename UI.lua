@@ -36,7 +36,7 @@ UI = {}
 
 
         -- Loads player sprite
-        love.graphics.setColor(0.5,0.5,0.5)
+        love.graphics.setColor(0.8,0.8,0.9)
         love.graphics.draw(playerParty[playerLead].sprite1, borderSize, 8, 0, 4)
 
         
@@ -63,7 +63,7 @@ UI = {}
 
 
         -- Loads cpu sprite
-        love.graphics.setColor(0.5,0.5,0.5)
+        love.graphics.setColor(0.8,0.8,0.9)
         love.graphics.draw(cpuParty[cpuLead].sprite2, winWidth-borderSize-320,borderSize+40,0,2.2)
 
 
