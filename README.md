@@ -1,4 +1,4 @@
-# Recreating Pokemon Battle
+# Modern Culture Battle - A recreation of Pokemon Battle using Lua/LOVE2D
 #### Video Demo: https://youtu.be/rM5Jx1yBILk
 #### Description: 
 This is a 2D pokemon inspired game made using the lua/LOVE2D framework, as a final project for CS50x. The scope of this project is to recreate only the turn based combat gameplay of a gameboy pokemon game to the best of my abilities within a reasonable timeframe (about 10 days) I chose not to incorporate any external libraries and developed my own gamestate managing system to experience firsthand some of the data structure and classes design choices game developers might make, as opposed to designing my game around an existencing structure.
