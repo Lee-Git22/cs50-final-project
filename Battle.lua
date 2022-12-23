@@ -22,8 +22,8 @@ itemBonus = {
 }
 
 function loadPlayerParty()
-    -- Loads in 4 monsters for player and 5 for cpu
-    playerPartySize = 3
+    -- Loads in 4 monsters for both trainers
+    playerPartySize = 4
     
     local p1 = math.random(1,9)
     math.randomseed(love.mouse.getPosition()) -- for better RNG
@@ -32,23 +32,21 @@ function loadPlayerParty()
     local p3 = math.random(1,5)
     local p4 = math.random(4,9)
     
-
+    -- For go using a loop to have more variety due to pseudo RNG limitations
     table.insert(playerParty, MonstersIndex[p4])
     table.insert(playerParty, MonstersIndex[p3])
     table.insert(playerParty, MonstersIndex[p2])
     table.insert(playerParty, MonstersIndex[p1])
-
-
+    
+    playerLead = 1 
     return
 end
 
 function loadCpuParty()
-    -- Loads in 3 monsters for player and 4 for cpu
     cpuPartySize = 4
 
-
     local p1 = math.random(1,9)
-    math.randomseed(love.mouse.getPosition()) -- for better RNG
+    math.randomseed(love.mouse.getPosition()) 
     local p2 = math.random(1,9)
     math.randomseed(os.time()-love.mouse.getPosition())
     local p3 = math.random(1,5)
@@ -59,13 +57,9 @@ function loadCpuParty()
     table.insert(cpuParty, MonstersIndex[p3])
     table.insert(cpuParty, MonstersIndex[p4])
 
-
+    cpuLead = 1
     return
 end
-
-
-
-
 
 -- Initialize player inventory 
 Inventory = {}
@@ -74,7 +68,7 @@ function loadInventory(Inventory)
     item1 = table.insert(Inventory, addItem(ItemDatabase[math.random(1,2)].name, 1)) -- powerful items
     item2 = table.insert(Inventory, addItem(ItemDatabase[math.random(3,4)].name, 2)) -- powerful items
     item3 = table.insert(Inventory, addItem(ItemDatabase[math.random(5,6)].name, math.random(2,4)))
-    item4 = table.insert(Inventory, addItem(ItemDatabase[7].name, math.random(2,4)))
+    item4 = table.insert(Inventory, addItem(ItemDatabase[math.random(7,8)].name, math.random(2,4)))
     
     return Inventory
 end
@@ -146,7 +140,7 @@ function calcBuff(gameState, entry, table)
         table.SPD = table.SPD * entry.parameters.SPD
        
         if entry.TYPE == "BUFF" then
-            gameState.message = "BUFF" -- NEEDS WORK
+            gameState.message = "BUFF" 
         else 
             gameState.message = "DEBUFF"
         end

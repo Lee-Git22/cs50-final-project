@@ -1,4 +1,4 @@
-battleBGM = love.audio.newSource("audio/battle.mp3", "static")
+battleBGM = love.audio.newSource("audio/battle.wav", "static")
 battleBGM:setVolume(0.5)
 
 attacksfx = love.audio.newSource("audio/attacksfx.wav", "static")
@@ -9,7 +9,7 @@ buffsfx = love.audio.newSource("audio/buffsfx.wav", "static")
 debuffsfx = love.audio.newSource("audio/debuffsfx.wav", "static")
 recruitsfx = love.audio.newSource("audio/recruitsfx.wav", "static")
 healsfx = love.audio.newSource("audio/healsfx.wav", "static")
-
+clicksfx = love.audio.newSource("audio/clicksfx.wav", "static")
 
 function BGM(gameState)   
     if not battleBGM:isPlaying() then
@@ -20,13 +20,13 @@ end
 
 function SFX(gameState)
 
-    if gameState.phase == "cpuswitch" then -- on cpuswitch play cry once
+    if gameState.phase == "CPUSWITCH" then -- on cpuswitch play cry once
         if playSFX then        
             love.audio.play(cpuParty[cpuLead].cry)
         end
     end
 
-    if gameState.phase == "playerswitch" then -- on playerswitch play cry once
+    if gameState.phase == "PLAYERSWITCH" then -- on playerswitch play cry once
         if playSFX then        
             love.audio.play(playerParty[playerLead].cry)
         end
@@ -38,7 +38,7 @@ function SFX(gameState)
         end
     end
 
-    if gameState.message == "attack" or gameState.message == "cpuAttack" then
+    if gameState.message == "ATTACK" or gameState.message == "CPUATTACK" then
         if playSFX then
             love.audio.play(attacksfx)
         end
@@ -56,7 +56,7 @@ function SFX(gameState)
         end
     end
 
-    if gameState.message == "MISS" or gameState.message == "RISKY "then
+    if gameState.message == "MISS" or gameState.message == "RISKY" then
         if playSFX then        
             love.audio.play(misssfx)
         end

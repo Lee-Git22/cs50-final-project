@@ -4,6 +4,9 @@ backgroundWidth = winWidth - (borderSize*2)
 playerSprite = love.graphics.newImage("sprites/player.png")
 cpuSprite = love.graphics.newImage("sprites/cpu.png")
 
+playerUI = false
+cpuUI = false
+
 UI = {}
 
     function UI.drawBackground()

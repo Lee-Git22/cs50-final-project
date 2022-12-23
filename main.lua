@@ -1,63 +1,56 @@
-Menu = require("Menu")
-UI = require("UI")
-MonstersModule = require("MonstersModule")
-ItemsModule = require("ItemsModule")
-AttackModule = require("AttackModule")
-Battle = require("Battle")
-Sfx = require("Sfx")
+-- Importing custom modules
+Menu = require("Menu") -- For drawing messages and menus in the lower parts of the game
+UI = require("UI") -- For drawing the battle phase UI and sprites
+MonstersModule = require("MonstersModule") -- The monster data table that holds base stats and movesets
+ItemsModule = require("ItemsModule") -- The items data table 
+AttackModule = require("AttackModule") -- The attacks data table that details specific moveset parameters
+Battle = require("Battle") -- Handles all battle related calculations and gamestate messages for results of each round
+Sfx = require("Sfx") -- Holds info for sound effects used in battle
 
--- Global menu tables to hold buttons
-mainButtons = {}
-
-MonstersIndex = {}
-playerParty = {}
-cpuParty = {}
+-- Global menu tables 
+MonstersIndex = {} 
 AttackDataBase = {}
 ItemDatabase = {}
 
--- Global values used for respective game state
+mainButtons = {}
+playerParty = {} 
+cpuParty = {}
+
+-- Global gameState table used to track game flow
 gameState = {
-    phase = "start",
-    turn = "",
-    message = "",
+    phase = "START", -- the general phase of the game, after start phase the game will loop back to main phase until the game is over
+    turn = "", -- to keep track of who goes first
+    message = "", -- for displaying the correct battle message
     playerInput = "", -- the move player chooses for the round
     computerInput = "", -- computers move for the round 
-    timer = 0
+    timer = 0 -- used to track how long messages are displayed for
 }
 
 function love.load()
 
-    MonstersModule.load() -- Loads in monsters into MonstersIndex table
-    AttackModule.load() -- Loads in database into Database table
-    ItemsModule.load()
-
+    -- Loads the respective modules
+    MonstersModule.load() 
+    AttackModule.load() 
+    ItemsModule.load() 
     Inventory = loadInventory(Inventory) -- Loads in items into Inventory table
-    -- Options for main menu
-    table.insert(mainButtons, Menu.newButton("FIGHT", function() gameState.phase = "fight" end))
-    table.insert(mainButtons, Menu.newButton("ITEM", function() gameState.phase = "item" end))
-    table.insert(mainButtons, Menu.newButton("HELP", function() gameState.phase ="HELP" end)) 
+    
+    -- Options for main phase menu
+    table.insert(mainButtons, Menu.newButton("FIGHT", function() gameState.phase = "FIGHT" end))
+    table.insert(mainButtons, Menu.newButton("ITEM", function() gameState.phase = "ITEM" end))
+    table.insert(mainButtons, Menu.newButton("HELP", function() gameState.phase = "HELP" end)) 
     table.insert(mainButtons, Menu.newButton("QUIT", function() love.event.quit(0) end)) 
     
-
-    loadPlayerParty()
-    loadCpuParty()
-
-
-
-    -- Sets first monster in party as party leader (default parameter)
-    playerLead = 1 
-    cpuLead = 1
-
-    playerUI = false
-    cpuUI = false
-
-    
+    -- Calls loading party functions from battle module
+    loadPlayerParty() 
+    loadCpuParty()  
 end
 
 function love.update(dt)
-    math.randomseed(love.mouse.getPosition()) -- for better RNG
+    math.randomseed(love.mouse.getPosition()) -- for better pseudo RNG
+
+    -- Updates correct SFX and BGM
     BGM()
-    SFX(gameState)
+    SFX(gameState) -- will play the correct SFX based on gameState.message
 
     gameState.timer = gameState.timer + dt -- Used for menu display and to stop accidental double clicks
 
@@ -69,7 +62,6 @@ function love.update(dt)
         DEF = playerParty[playerLead].stats.DEF * playerCombat.DEF + itemBonus.DEF,
         SPD = playerParty[playerLead].stats.SPD * playerCombat.SPD + itemBonus.SPD,
     }
-
     cpuStats = {
         TYPE = cpuParty[cpuLead].stats.TYPE,
         HP = cpuParty[cpuLead].stats.HP - cpuCombat.DMG,
@@ -78,7 +70,7 @@ function love.update(dt)
         SPD = cpuParty[cpuLead].stats.SPD * cpuCombat.SPD
     }
 
-    -- Load the moves for first monster in party      
+    -- Updates the moves for player
     playerList = {
         playerParty[playerLead].moveset.move1, 
         playerParty[playerLead].moveset.move2, 
@@ -87,40 +79,42 @@ function love.update(dt)
     }
     
     -- For player round
-    if gameState.phase == "playerRound" and gameState.turn == "player" then
-
-        -- Change targets for battle message display
+    if gameState.phase == "PLAYERROUND" and gameState.turn == "PLAYER" then
+        
+        -- Sets perspective for battle messages
         Self = playerParty[playerLead]
         Opponent = cpuParty[cpuLead]
 
         for i, entry in pairs(AttackDataBase) do -- Look thru database for the attack selected
             if gameState.playerInput == entry.name then
                 
-                if entry.TYPE == "BUFF" then
+                if entry.TYPE == "BUFF" then -- Returns gameState.message of "BUFF" or "MISS"
                     gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
-                
-                elseif entry.TYPE == "DEBUFF" then
+                    
+                elseif entry.TYPE == "DEBUFF" then -- Returns gameState.message of "DEBUFF" or "MISS"
                     gameState, cpuCombat = calcBuff(gameState, entry, cpuCombat)
-
-                else -- For attacks
-                    gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats = 
-                    calcAttack(gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats)
+                    
+                -- For all other attacks
+                else -- Returns gameState.message of "SUPER EFFECTIVE!" "not very effective..." "FAINT" "MISS" or "RISKY"
+                    gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats = calcAttack(gameState, entry, playerCombat, playerStats, cpuCombat, cpuStats)
                 end
                 
-                if gameState.message == "FAINT" then
+                if gameState.message == "FAINT" then -- For killing blows, pivot to faint phase
                     gameState.phase = "FAINT"
                 else
-                    gameState.phase = "playerAction"
+                    gameState.phase = "PLAYERACTION"
                 end
-                gameState.timer = 0
-                playSFX = true
+
+                gameState.timer = 0 -- Resets timer for next message
+                playSFX = true -- Plays a SFX based on whichever gameState.message was returned for the attack
                 
             end
         end
     end
 
-    if gameState.phase == "itemRound" then
-        -- Change targets for battle message display
+    -- If player used an item they will always go first
+    if gameState.phase == "ITEMROUND" then
+        
         Self = playerParty[playerLead]
         Opponent = cpuParty[cpuLead]
 
@@ -130,10 +124,10 @@ function love.update(dt)
                 if entry.TYPE == "HEAL" then -- Heals monster and updates gamestate message to HEAL
                     playerCombat.DMG = Heal(playerCombat.DMG, entry.value)
 
-                elseif entry.TYPE == "RECRUIT" then -- Adds a number of monsters to party
-                    Recruit(entry.value)
+                elseif entry.TYPE == "RECRUIT" then 
+                    Recruit(entry.value) -- Returns gamestate.message "RECRUIT"
                 
-                elseif entry.TYPE == "TRADEOFF" then
+                elseif entry.TYPE == "TRADEOFF" then -- Returns gameState.message "TRADEOFF"
                     if entry.name == "ATK BERRY" then
                         itemBonus.DEF, itemBonus.ATK = Tradeoff(itemBonus.DEF, itemBonus.ATK, (playerParty[playerLead].stats.DEF * 0.5), entry.value)
                     elseif entry.name == "DEF BERRY" then
@@ -143,17 +137,18 @@ function love.update(dt)
                     end  
                     
                 end
-                playSFX = true
-                gameState.phase = "playerAction"
-                gameState.timer = 0
                 
+                gameState.phase = "PLAYERACTION"
+                gameState.timer = 0
+                playSFX = true
 
             end 
         end
         
     end
 
-    if gameState.phase == "cpuRound" and gameState.turn == "cpu" then
+    -- For CPU turn, mirrors a player round but with randomized move selection
+    if gameState.phase == "CPUROUND" and gameState.turn == "CPU" then
 
         Self = cpuParty[cpuLead]
         Opponent = playerParty[playerLead]
@@ -166,7 +161,7 @@ function love.update(dt)
 
                 elseif entry.TYPE == "DEBUFF" then                   
                     gameState, playerCombat = calcBuff(gameState, entry, playerCombat)
-                    -- gameState.message = "DEBUFF"
+                    
                 else 
                     -- For attacks
                     gameState, entry, cpuCombat, cpuStats, playerCombat, playerStats = 
@@ -176,8 +171,8 @@ function love.update(dt)
                 if gameState.message == "FAINT" then
                     gameState.phase = "FAINT"
                 else
-                    gameState.phase = "cpuAction"
-                    gameState.turn = "player"  
+                    gameState.phase = "CPUACTION"
+                    gameState.turn = "PLAYER"  
                 end
 
                 gameState.timer = 0
@@ -193,17 +188,16 @@ end
 
 function love.draw()
 
-    -- Represents current button y position
-    local cursorY = 0
-
     UI.drawBackground()
     
+    -- For starting the game
     if startingGameUI then
         love.graphics.setColor(0.5,0.5,0.5)
-        love.graphics.draw(playerSprite, borderSize, 8, 0, 4)
-        love.graphics.draw(cpuSprite, winWidth-borderSize-320,borderSize+40,0,2.2)
+        love.graphics.draw(playerSprite, borderSize, 8, 0, 4) -- Draw player sprite
+        love.graphics.draw(cpuSprite, winWidth-borderSize-320,borderSize+40,0,2.2) -- Draw CPU sprite
     end
 
+    -- If Fighters are sent out, display their HP and sprites
     if playerUI then 
         UI.drawPlayer()
     end
@@ -211,28 +205,116 @@ function love.draw()
         UI.drawEnemy()
     end
     
-    if gameState.phase == "start" then
-        startingGameUI = true
+    -- Initial gamephase/cutscene
+    if gameState.phase == "START" then
+        startingGameUI = true -- Keeps trainer sprites up
 
+        -- 
         local leftClick = love.mouse.isDown(1)
-        gameState.message = "start"
-        Menu.loadDialogue(gameState) -- Straw Hat PETER wants to Battle
-        
-        if gameState.timer >= 10 or leftClick then -- After 10 seconds or leftclick, send out cpu monster
-            
-            startingGame = true
-            gameState.message = "cpuswitch"
-            gameState.phase = "cpuSelect"
-            gameState.timer = 0
 
-            
-            
+        gameState.message = "START"
+        Menu.loadDialogue(gameState) -- Will Display "Straw Hat PETER wants to Battle"
+
+        -- After 10 seconds or leftclick, send out cpu monster
+        if gameState.timer >= 10 or leftClick then 
+            love.audio.play(clicksfx)
+
+            startingGame = true -- Used for sending out first pokemon
+            gameState.phase = "CPUSELECT" -- Go to next phase - CPU Sents out fighter first
+            gameState.timer = 0
         end
 
     end
 
-    -- Switch to Main menu
-    if gameState.phase == "main" then
+    -- The phase where CPU Selects its next fighter
+    if gameState.phase == "CPUSELECT" then
+        startingGameUI = false -- hide trainer sprites, the game has started
+
+        if gameState.timer >= 0.5 then -- after 0.5s
+            if startingGame then -- send out first pokemon
+                cpuLead = 1
+            else
+                cpuCombat = resetCombat(cpuCombat) -- resets combat stats for next monster
+                cpuLead = cpuLead + 1 -- shift party up by 1    
+            end
+           
+            if cpuLead > cpuPartySize then -- No more fighters left
+                cpuLead = 1 -- Reset to prevent index error
+                gameState.message = "WIN"
+                gameState.phase = "WIN"
+                
+            else
+                cpuUI = true
+                playSFX = true
+                gameState.message = "CPUSELECT"
+                gameState.phase = "CPUSWITCH"
+                
+
+            end
+            gameState.timer = 0
+        end
+    end
+
+    -- Transitionary phase to pass back to playerselect for first turn or back to main
+    if gameState.phase == "CPUSWITCH" then
+        
+        --displays CPU sends out X from gameState.message "cpuselect"
+        Menu.loadDialogue(gameState, cpuParty[cpuLead].name)
+
+        if gameState.timer >= 1.5 then -- After 1.5s,
+            if startingGame then -- pass to player's first monster
+                gameState.phase = "PLAYERSELECT"
+            else -- just return to main
+                gameState.phase = "MAIN"
+            end
+            gameState.timer = 0
+        end
+    end
+
+    -- Player Selects a pokemon for this phase, mirrors cpuselect
+    if gameState.phase == "PLAYERSELECT" then
+        if gameState.timer >= 0.5 then
+
+            if startingGame then -- send out first pokemon
+                playerLead = 1
+            else -- otherwise send next one
+                playerCombat = resetCombat(playerCombat)
+                playerLead = playerLead + 1
+            end
+            
+            if playerLead > playerPartySize then
+                playerLead = 1 -- Reset to prevent index error
+                gameState.message = "LOSE"
+                gameState.phase = "LOSE"
+            else
+                playerUI = true
+                playSFX = true
+                gameState.message = "PLAYERSELECT"
+                gameState.phase = "PLAYERSWITCH"
+            end
+
+            gameState.timer = 0
+        end
+    end
+
+    -- Also transitionary phase back to main 
+    if gameState.phase == "PLAYERSWITCH" then
+
+        --displays Player sends out X 
+        Menu.loadDialogue(gameState, playerParty[playerLead].name)
+
+        if gameState.timer >= 1.5 then
+            startingGame = false -- starting game finished
+            gameState.phase = "MAIN"
+            gameState.timer = 0
+        end
+    end
+
+    -- Represents current y position for drawing buttons
+    local cursorY = 0
+
+    -- The main phase where player selects the action for the round
+    if gameState.phase == "MAIN" then
         cursorY = 0 -- Resets cursor
         
         -- Loads the main menu
@@ -254,23 +336,22 @@ function love.draw()
 
             -- Checks if button is clicked and calls function if true
             local leftClick = love.mouse.isDown(1) -- 1 represents left click
-            if leftClick and hot and gameState.timer >= 0.3 then
+            if leftClick and hot and gameState.timer >= 0.3 then -- timer 0.3s to prevent double clicking
                 gameState.timer = 0
                 button.fn()
+                love.audio.play(clicksfx)
             end
 
             -- Move cursor to prepare for next button
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
         end
-
-        
     end
 
-    -- Switch to Fight menu 
-    if gameState.phase == "fight" then
+    -- Switch to Fight phase and draw menus
+    if gameState.phase == "FIGHT" then
         cursorY = 0
 
-        -- For each move in moveset of the current monster
+        -- Draws buttons in same way for main menu
         for i, moves in ipairs(playerList) do
             local buttonX = (winWidth) * 0.6
             local buttonWidth = (winWidth) * 0.4 - borderSize
@@ -284,45 +365,45 @@ function love.draw()
                 buttonColor = {0.4, 0.4, 0.4, 1}
             end
 
-            Menu.loadButton(buttonColor, moves, buttonX, buttonY, buttonWidth)
-
-            local leftClick = love.mouse.isDown(1)
-            
+            local leftClick = love.mouse.isDown(1)           
             if leftClick and hot and gameState.timer >= 0.3 then
-                gameState.timer = 0
-    
-                gameState.message = "attack"
+                love.audio.play(clicksfx)
+
+                gameState.message = "ATTACK" -- For displaying attack message "FIGHTER used MOVE"
                 gameState.playerInput = moves -- Get players move
                 gameState.computerInput = getCPUmove() -- Get computers move
-                turn = 1
-
+                
+                turn = 1 -- Tracks turn number
                 -- Determines who turn 1 goes to 
                 if playerStats.SPD >= cpuStats.SPD then
-                    gameState.turn = "player"
-                    gameState.phase = "dialogue"
-                 else
-                    gameState.turn = "cpu"
-                    gameState.phase = "cpuDialogue"
-                 end
+                    gameState.turn = "PLAYER"
+                    gameState.phase = "DIALOGUE"
+                else
+                    gameState.turn = "CPU"
+                    gameState.phase = "CPUDIALOGUE"
+                end
 
-                
-            end
-
-            local rightClick = love.mouse.isDown(2) 
-            if rightClick and gameState.timer >= 0.3 then
-                gameState.phase = "main"
                 gameState.timer = 0
             end
-            
+
+            -- For going back to main menu
+            local rightClick = love.mouse.isDown(2) 
+            if rightClick and gameState.timer >= 0.3 then
+                love.audio.play(clicksfx)
+                gameState.phase = "MAIN"
+                gameState.timer = 0
+            end
+
+            Menu.loadButton(buttonColor, moves, buttonX, buttonY, buttonWidth)
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
         end
     end
 
     -- Switch to item menu 
-    if gameState.phase == "item" then
+    if gameState.phase == "ITEM" then
         cursorY = 0
         
-        -- Load the item menu
+        -- Draws the item buttons same way for main/fight buttons
         for i, items in ipairs(Inventory) do  
             
             local buttonX = (winWidth * 0.6) 
@@ -339,26 +420,24 @@ function love.draw()
 
             local leftClick = love.mouse.isDown(1) 
             if leftClick and hot and gameState.timer > 0.3 then
-                gameState.timer = 0
+                love.audio.play(clicksfx)
 
                 gameState.playerInput = items.name
 
-                if items.uses <= 0 then
+                if items.uses <= 0 then -- Prevents player from using item with no uses
                     items.uses = 0
                     gameState.message = "NO ITEM"
                     gameState.phase = "ERROR"
                 else
-                    gameState.message = "item"
-                
-                
-                    gameState.computerInput = getCPUmove() -- Get computers move
+                    gameState.computerInput = getCPUmove() 
     
                     turn = 1
-                    -- When using item, player always goes first
-                    gameState.turn = "player"
-                    gameState.phase = "dialogue"
+                
+                    gameState.turn = "PLAYER" -- When using item, player always goes first
+                    gameState.message = "ITEM"
+                    gameState.phase = "DIALOGUE"
+                    
                     items.uses = items.uses - 1 
-        
                     gameState.timer = 0
                 end
 
@@ -366,211 +445,103 @@ function love.draw()
 
             local rightClick = love.mouse.isDown(2) 
             if rightClick and gameState.timer >= 0.3 then
-                gameState.phase = "main"
+                love.audio.play(clicksfx)
+                gameState.phase = "MAIN"
                 gameState.timer = 0
             end
 
             Menu.loadButton(buttonColor, string.format("%s x %s", items.name, items.uses), buttonX, buttonY, buttonWidth)
-            
             cursorY = cursorY + (BUTTON_HEIGHT + MARGIN)
         end
     end
 
-    if gameState.phase == "ERROR" then
-        cursoyY = 0
-        Menu.loadDialogue(gameState, nil, gameState.playerInput)
-        
-        -- Change this to be a keypress later
-        if gameState.timer >= 1.5 then
-
-            gameState.phase = "main"
-            gameState.timer = 0
-
-        end
-    end
-
-    if gameState.phase == "dialogue" then
-        cursoyY = 0
-
+    -- Transitionary dialogue phases depending on whether attack or item was selected from main phase
+    if gameState.phase == "DIALOGUE" then   
         -- Displays Monster use X OR PLAYER used Y based on gameState.message
         Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
         
-        -- Change this to be a keypress later
         if gameState.timer >= 1.5 then
-            if gameState.message == "attack" then
-                gameState.phase = "playerRound"
-            else -- message would be "item"
-                gameState.phase = "itemRound"
-            end
-            gameState.timer = 0
-
-        end
-    end
-
-    if gameState.phase == "playerAction" then
-        Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
-
-        if gameState.timer >= 2 then
-            
-            -- if turn 1 just finished then go to turn 2, otherwise reset
-            if turn == 1 then
-                gameState.phase = "cpuDialogue"
-                gameState.turn = "cpu"
-                turn = 2 
+            if gameState.message == "ATTACK" then
+                gameState.phase = "PLAYERROUND" -- For battle calculations in love.update
             else 
-                gameState.phase = "main"
+                gameState.phase = "ITEMROUND" -- For item calculations in love.update
             end
             gameState.timer = 0
         end
     end
-
-    if gameState.phase == "cpuDialogue" then
+    if gameState.phase == "CPUDIALOGUE" then
         -- Displays CPU monster used X 
-        gameState.message = "cpuAttack"
+        gameState.message = "CPUATTACK"
         Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
         
-        -- Change this to be a keypress later
         if gameState.timer >= 1.5 then
-            gameState.phase = "cpuRound" -- in love.update
+            gameState.phase = "CPUROUND"
             gameState.timer = 0
         end
-        
     end
 
-    if gameState.phase == "cpuAction" then
+    -- Displays the results of player or cpu action based on message from update function
+    if gameState.phase == "PLAYERACTION" then
+       
+        Menu.loadDialogue(gameState, playerParty[playerLead].name, gameState.playerInput)
+
+        if gameState.timer >= 2 then -- After 2 seconds go to turn 2 or reset
+            if turn == 1 then
+                gameState.phase = "CPUDIALOGUE"
+                gameState.turn = "CPU"
+                turn = 2 
+            else 
+                gameState.phase = "MAIN"
+            end
+            gameState.timer = 0
+        end
+    end
+    if gameState.phase == "CPUACTION" then
         Menu.loadDialogue(gameState, cpuParty[cpuLead].name, gameState.computerInput)
 
         if gameState.timer >= 1.5 then
 
             if turn == 1 then 
-                turn = 2
-                gameState.phase = "dialogue"
-                gameState.message = "attack"
-                gameState.turn = "player"
-                gameState.timer = 0
+                -- Go to player's turn and display player's attack message
+                gameState.message = "ATTACK"
+                gameState.phase = "DIALOGUE"
+                gameState.turn = "PLAYER"
+                turn = 2 -- update turn count
             else
-                gameState.phase = "main"
-                gameState.timer = 0
+                gameState.phase = "MAIN"
             end
+            gameState.timer = 0
         end
     end
 
+    -- For handling game flow when a fighter faints
     if gameState.phase == "FAINT" then       
         Menu.loadDialogue(gameState, Opponent.name) -- Displays X monster FAINTED 
         
-    
         if gameState.timer >= 1.5 then
-            
-            -- Determine which side fainted
+            -- Determine which side fainted and go to respective phase
             if cpuStats.HP == 0 then
-                cpuUI = false
-                gameState.phase = "cpuSelect" -- cpu switch
-                gameState.timer = 0 
+                cpuUI = false -- for sprite transition 
+                gameState.phase = "CPUSELECT" -- cpu switch
+                
             else 
                 playerUI = false
-                gameState.phase = "playerSelect" -- player switch
-                gameState.timer = 0
-            end
-
-            
-            
-        end
-    end
-
-    if gameState.phase == "cpuSelect" then
-        -- keeps X is FAINTED on the screen
-        --Menu.loadDialogue(gameState, Opponent)
-
-        startingGameUI = false -- hide trainer sprites
-
-        if gameState.timer >= 0.5 then -- after 0.5
-            if startingGame then -- send out first pokemon
+                gameState.phase = "PLAYERSELECT" -- player switch
                 
-                cpuLead = 1
-                gameState.message = "cpuswitch"
-                gameState.phase = "cpuswitch"
-            else
-                cpuCombat = resetCombat(cpuCombat) -- resets combat stats for next monster
-                cpuLead = cpuLead + 1 -- shift party up by 1    
             end
-           
-            if cpuLead > cpuPartySize then
-                cpuLead = 1
-                gameState.message = "WIN"
-                gameState.phase = "WIN"
-                
-            else
-                cpuUI = true
-                playSFX = true
-                gameState.message = "cpuswitch"
-                gameState.phase = "cpuswitch"
-            end
-
-            gameState.timer = 0
+            gameState.timer = 0 
         end
-
-    end
-
-    if gameState.phase == "cpuswitch" then
-        --displays CPU sends out X 
-        Menu.loadDialogue(gameState, cpuParty[cpuLead].name)
-
-        if gameState.timer >= 1.5 then 
-            if startingGame then -- pass to player's first monster
-                gameState.phase = "playerSelect"
-            else -- just return to main
-                gameState.phase = "main"
-            end
-            gameState.timer = 0
-        end
-        
-       
     end
     
-    if gameState.phase == "playerSelect" then
-        if gameState.timer >= 0.5 then
-
-            if startingGame then -- send out first pokemon
-                playerLead = 1
-            else
-                playerCombat = resetCombat(playerCombat)
-                playerLead = playerLead + 1
-            end
-            
-            if playerLead > playerPartySize then
-                playerLead = 1
-                gameState.message = "LOSE"
-                gameState.phase = "LOSE"
-            else
-                playerUI = true
-                playSFX = true
-                gameState.message = "playerswitch"
-                gameState.phase = "playerswitch"
-            end
-
-            gameState.timer = 0
-        end
-    end
-
-    if gameState.phase == "playerswitch" then
-        --displays CPU sends out X 
-        Menu.loadDialogue(gameState, playerParty[playerLead].name)
-        if gameState.timer >= 1.5 then
-            startingGame = false -- starting game finished
-            gameState.phase = "main"
-            gameState.timer = 0
-        end
-    end
-
+    -- Displays Trainer sprites and end game screen result messages
     if gameState.phase == "WIN" then
         cpuUI = false
         playerUI = false
         if gameState.timer >= 1.0 then
             startingGameUI = true
-            Menu.loadDialogue(gameState)
+            Menu.loadDialogue(gameState) 
         end
     end
-
     if gameState.phase == "LOSE" then
         cpuUI = false
         playerUI = false
@@ -580,12 +551,26 @@ function love.draw()
         end
     end
     
+    -- When player tries to use an item with no more uses
+    if gameState.phase == "ERROR" then
+        Menu.loadDialogue(gameState, nil, gameState.playerInput)
+        
+        -- Change this to be a keypress later
+        if gameState.timer >= 1.0 then
+            love.audio.play(clicksfx)
+            gameState.phase = "MAIN"
+            gameState.timer = 0
+
+        end
+    end
+
+    -- Tutorial/Help screen
     if gameState.phase == "HELP" then
         gameState.message = "HELP"
         Menu.loadDialogue(gameState)
         local rightClick = love.mouse.isDown(2)
         if gameState.timer >= 10 or rightClick and gameState.timer >= 2 then
-            gameState.phase = "main"
+            gameState.phase = "MAIN"
             gameState.timer = 0
         end
     end

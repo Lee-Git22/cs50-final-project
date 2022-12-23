@@ -67,7 +67,7 @@ Menu = {}
             textboxHeight
         )
 
-        if gameState.message == "start" then
+        if gameState.message == "START" then
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -78,7 +78,7 @@ Menu = {}
             )
         end
 
-        if gameState.message == "attack" then
+        if gameState.message == "ATTACK" then
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -89,7 +89,7 @@ Menu = {}
             )
         end
 
-        if gameState.message == "cpuAttack" then
+        if gameState.message == "CPUATTACK" then
             -- Draws action text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -100,7 +100,7 @@ Menu = {}
             )
         end
 
-        if gameState.message == "item" then
+        if gameState.message == "ITEM" then
             -- Draws consumable text
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -248,7 +248,7 @@ Menu = {}
             )
         end
 
-        if gameState.message == "cpuswitch" then
+        if gameState.message == "CPUSELECT" then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -259,7 +259,7 @@ Menu = {}
             )
         end
 
-        if gameState.message == "playerswitch" then
+        if gameState.message == "PLAYERSELECT" then
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
@@ -285,7 +285,7 @@ Menu = {}
         -- Displays action message
         love.graphics.setColor(0.2, 0.2, 0.2)
         love.graphics.print(
-            string.format("COMPUTER IS OUT OF FIGHTERS!\nYOU WON THE CULTURE WAR!"),
+            string.format("PETER IS OUT OF FIGHTERS!\nYOU DID IT!!!"),
             font,
             textboxX + borderSize,
             textboxY + borderSize
@@ -296,7 +296,7 @@ Menu = {}
             -- Displays action message
             love.graphics.setColor(0.2, 0.2, 0.2)
             love.graphics.print(
-                string.format("YOU ARE OUT OF FIGHTERS!\nYOU LOST THE CULTURE WAR..."),
+                string.format("YOU ARE OUT OF FIGHTERS!\nAlt+F4......"),
                 font,
                 textboxX + borderSize,
                 textboxY + borderSize
