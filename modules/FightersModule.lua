@@ -38,13 +38,13 @@ FightersIndex = {}
             "BREW MONKEY", 
             stats(
                 "ANIMAL",
-                120,
+                140,
                 70,
-                35,
+                15,
                 60), 
             moveset(
                 "SURF", 
-                "CHUG CHUG", 
+                "DBL DBL", 
                 "CHEAP SHOT",
                 "TURKEY SLAM"),
                 love.graphics.newImage("sprites/brewmonkeyback.png"),
@@ -59,7 +59,7 @@ FightersIndex = {}
                 "ANIMAL",
                 200,
                 35,
-                50,
+                40,
                 35), 
             moveset(
                 "BITE", 
@@ -76,13 +76,13 @@ FightersIndex = {}
             "LEBRON JAMES", 
             stats(
                 "HUMAN",
-                140,
-                35,
-                20,
+                90,
+                45,
+                30,
                 5), 
             moveset(
                 "FREE THROW", 
-                "SPACE JAM DUNK", 
+                "SPACE JAM", 
                 "GOAT MODE",
                 "HARD D"),
                 love.graphics.newImage("sprites/lebronback.png"),
@@ -96,14 +96,14 @@ FightersIndex = {}
             stats(
                 "MACHINE",
                 190,
-                30,
-                30,
+                45,
+                45,
                 45), 
             moveset(
                 "DOWNLOAD", 
                 "DEEP LEARN", 
                 "LASER",
-                "COPYPASTA"),
+                "PIECIC"),
                 love.graphics.newImage("sprites/gpt3back.png"),
                 love.graphics.newImage("sprites/gpt3front.png"),
                 love.audio.newSource("audio/monstercry/gpt3cry.wav", "static")
@@ -114,8 +114,8 @@ FightersIndex = {}
             "PIKACHU",
             stats(
                 "MAGIC",
-                115,
-                100,
+                135,
+                80,
                 10,
                 50), 
             moveset(
@@ -134,14 +134,14 @@ FightersIndex = {}
             stats(
                 "HUMAN",
                 170,
-                55,
-                25,
+                65,
+                35,
                 40), 
             moveset(
                 "CHEAP SHOT", 
                 "HARD D", 
-                "NO TROUBLE",
-                "SPACE JAM DUNK"),
+                "BEEF",
+                "SPARTAN RAGE"),
                 love.graphics.newImage("sprites/jackieback.png"),
                 love.graphics.newImage("sprites/jackiefront.png"),
                 love.audio.newSource("audio/monstercry/jackiecry.wav", "static")
@@ -153,11 +153,11 @@ FightersIndex = {}
             stats(
                 "MACHINE",
                 210,
-                55,
+                65,
                 30,
                 10), 
             moveset(
-                "CHUG CHUG", 
+                "DBL DBL", 
                 "DOWNLOAD", 
                 "LASER",
                 "BIG ONE"),
@@ -172,11 +172,11 @@ FightersIndex = {}
             stats(
                 "ANIMAL",
                 175,
-                48,
+                58,
                 35,
                 20), 
             moveset(
-                "NO TROUBLE", 
+                "BEEF", 
                 "FREE THROW", 
                 "PIECIC",
                 "DEEP LEARN"),
@@ -190,10 +190,10 @@ FightersIndex = {}
             "KRATOS",
             stats(
                 "MAGIC",
-                240,
+                300,
                 45,
                 0,
-                30), 
+                10), 
             moveset(
                 "FREE THROW", 
                 "CURSE", 

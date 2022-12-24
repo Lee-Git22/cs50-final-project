@@ -36,21 +36,21 @@ AttackDataBase = {}
         newEntry(
             "BIG ONE",
             "RISKY",
-            Attack(50, 1.5, 0.33)
+            Attack(50, 2, 0.33)
         ))
 
         hardd = table.insert(AttackDataBase, 
         newEntry(
             "HARD D",
             "RISKY",
-            Attack(40, 1.15, 0.75)
+            Attack(40, 1.15, 0.65)
         ))
 
         turkeyslam = table.insert(AttackDataBase, 
         newEntry(
             "TURKEY SLAM",
             "RISKY",
-            Attack(25, 1, 0.75)
+            Attack(25, 1.5, 0.85)
         ))
 
 
@@ -59,21 +59,21 @@ AttackDataBase = {}
         newEntry(
             "PIECIC",
             "MAGIC",  
-            Attack(65, 1, 0.7)
+            Attack(25, 1, 0.85)
         ))
         
         thunderbolt = table.insert(AttackDataBase, 
         newEntry(
             "THUNDER BOLT",
             "MAGIC", 
-            Attack(15, 1.15, 1)
+            Attack(30, 1.15, 0.9)
         ))
  
         spacejamdunk = table.insert(AttackDataBase, 
         newEntry(
-            "SPACE JAM DUNK",
+            "SPACE JAM",
             "MAGIC",
-            Attack(0, 1, 1)
+            Attack(0, 2, 1)
         ))
 
         -- ANIMAL MOVES --
@@ -81,14 +81,14 @@ AttackDataBase = {}
         newEntry(
             "BITE",
             "ANIMAL",
-            Attack(20, 1.25, 0.80)
+            Attack(20, 1.25, 1)
         ))
 
         cheapshot = table.insert(AttackDataBase, 
         newEntry(
             "CHEAP SHOT",
             "ANIMAL",
-            Attack(-20, 1.3, 1)
+            Attack(-20, 1.75, 1)
         ))
 
         -- MACHINE MOVES --
@@ -96,12 +96,12 @@ AttackDataBase = {}
         newEntry(
             "LASER",
             "MACHINE",
-            Attack(0, 1.15, 1)
+            Attack(0, 2, 1)
         ))
 
-        copypasta = table.insert(AttackDataBase, 
+        paywall = table.insert(AttackDataBase, 
         newEntry(
-            "COPYPASTA",
+            "PAYWALL",
             "MACHINE",
             Attack(35, 0.85, 0.9)
         ))
@@ -111,7 +111,7 @@ AttackDataBase = {}
         newEntry(
             "FREE THROW",
             "HUMAN",
-            Attack(20, 1.1, 0.9)
+            Attack(10, 1.8, 0.9)
         ))
         
         slap = table.insert(AttackDataBase, 
@@ -125,22 +125,22 @@ AttackDataBase = {}
         newEntry(
             "SURF",
             "HUMAN",
-            Attack(50, 0.8, 0.925)
+            Attack(40, 1, 0.925)
         ))
 
         --BUFF/DEBUFFS --
-        notrouble = table.insert(AttackDataBase, 
+        beef = table.insert(AttackDataBase, 
         newEntry(
-            "NO TROUBLE",
+            "BEEF",
             "BUFF", 
-            Buff(1, 1.25, 1, 0.75)
+            Buff(1.25, 1.25, 0.5, 0.75)
         ))
 
         curse = table.insert(AttackDataBase,
         newEntry(
             "CURSE",
             "DEBUFF",  
-            Buff(1.15, 0.5, 0.5, 0.85)
+            Buff(1.5, 0.25, 0.25, 0.9)
         ))
 
         deeplearn = table.insert(AttackDataBase, 
@@ -150,32 +150,32 @@ AttackDataBase = {}
             Buff(1.38, 1, 0.8, 0.85)
         ))
 
-        chugchug = table.insert(AttackDataBase, 
+        dbldbl = table.insert(AttackDataBase, 
         newEntry(
-            "CHUG CHUG",
+            "DBL DBL",
             "BUFF",
-            Buff(2, 0.5, 0.5, 0.9)
+            Buff(2, 0.25, 2, 0.85)
         ))
 
         goatmode = table.insert(AttackDataBase, 
         newEntry(
             "GOAT MODE",
             "BUFF",
-            Buff(2, 1, 2, 0.85) 
+            Buff(2, 1, 2, 0.8) 
         ))
 
         spartanrage = table.insert(AttackDataBase, 
         newEntry(
             "SPARTAN RAGE",
             "BUFF",
-            Buff(2, 2, 2, 1) 
+            Buff(2, 0.25, 1, 0.9) 
         ))
 
         download = table.insert(AttackDataBase, 
         newEntry(
             "DOWNLOAD",
             "DEBUFF",
-            Buff(1, 0.8, 0.8, 0.85)
+            Buff(1, 0.75, 0.75, 1)
         ))
 
     end
